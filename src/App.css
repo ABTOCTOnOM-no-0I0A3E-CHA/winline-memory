@@ -2,7 +2,11 @@ body {
   background-image: url('bg.png');
   background-size: cover;
   background-repeat: no-repeat;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
+
+/* ─── grid ──────────────────────────────────────────────────────────────── */
 
 .main-grid {
   grid-template-columns: 469px 1fr 469px;
@@ -23,5 +27,250 @@ body {
 @media (max-width: 992px) {
   .main-grid {
     grid-template-columns: 238px 1fr 238px;
+  }
+}
+
+/* ─── title ─────────────────────────────────────────────────────────────── */
+
+.title-main {
+  font-size: 50px;
+  line-height: 50px;
+}
+
+@media (max-width: 1440px) {
+  .title-main {
+    font-size: 40px;
+    line-height: 40px;
+  }
+}
+
+@media (max-width: 991px) {
+  .title-main {
+    font-size: 30px;
+    line-height: 30px;
+  }
+}
+
+/* ─── logos ──────────────────────────────────────────────────────────────── */
+
+.logo-sport24 {
+  height: auto;
+}
+
+.logo-winline {
+  height: auto;
+}
+
+@media (max-width: 992px) {
+  .logo-winline {
+    width: 75px;
+  }
+
+  .logo-sport24 {
+    width: 65px;
+  }
+
+  .logo-cross {
+    width: 10px;
+  }
+}
+
+/* ─── stat values & labels (desktop panel) ──────────────────────────────── */
+
+.stat-value {
+  font-size: 35px;
+  line-height: 35px;
+}
+
+.stat-label {
+  font-size: 20px;
+  line-height: 20px;
+}
+
+@media (max-width: 1440px) {
+  .stat-value {
+    font-size: 30px;
+    line-height: 30px;
+  }
+
+  .stat-label {
+    font-size: 16px;
+    line-height: 16px;
+  }
+}
+
+@media (max-width: 992px) {
+  .stat-value {
+    font-size: 24px;
+    line-height: 24px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    line-height: 14px;
+  }
+}
+
+/* ─── gap between stat rows (ПАРЫ/ХОДЫ → ВРЕМЯ) ────────────────────────── */
+
+.stat-row-gap {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1440px) {
+  .stat-row-gap {
+    margin-bottom: 35px;
+  }
+}
+
+@media (max-width: 992px) {
+  .stat-row-gap {
+    margin-bottom: 20px;
+  }
+}
+
+/* ─── card bonus ribbon ─────────────────────────────────────────────────── */
+
+.card-bonus-ribbon {
+  width: 64px;
+  height: 64px;
+}
+
+.card-bonus-text {
+  width: 90px;
+  bottom: 14px;
+  right: -22px;
+  transform: rotate(-45deg);
+  font-size: 11px;
+  line-height: 20px;
+}
+
+@media (max-width: 992px) {
+  .card-bonus-ribbon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .card-bonus-text {
+    width: 74px;
+    bottom: 11px;
+    right: -18px;
+    font-size: 9px;
+    line-height: 18px;
+  }
+}
+
+@media (max-width: 991px) {
+  .card-bonus-ribbon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .card-bonus-text {
+    width: 70px;
+    bottom: 11px;
+    right: -17px;
+    font-size: 9px;
+    line-height: 18px;
+  }
+}
+
+/* ─── mobile (<720px) ─────────────────────────────────────────────────── */
+
+@media (min-width: 992px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .main-grid {
+    grid-template-columns: 1fr;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 70px;
+    gap: 0;
+  }
+
+  .mobile-rectangles {
+    display: flex;
+    width: 100%;
+  }
+
+  .mobile-rectangles svg {
+    flex: 1;
+    width: 100%;
+    height: 10px;
+  }
+}
+
+/* ─── interactive buttons with gray border ──────────────────────────────── */
+
+.btn-outline {
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.btn-outline:hover,
+.btn-primary:hover {
+  border-color: #FF6A13;
+  box-shadow: 0px 2px 14px rgba(255, 106, 19, 0.3);
+}
+
+.btn-primary {
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+/* ─── card hover ────────────────────────────────────────────────────────── */
+
+.card-hover {
+  transition: box-shadow 0.2s, outline-color 0.2s;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  position: relative;
+}
+
+.card-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 44px #FF6A13;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.card-hover:hover {
+  outline-color: #FF6A13;
+  box-shadow: 0px 2px 14px rgba(255, 106, 19, 0.6);
+}
+
+.card-hover:hover::after {
+  opacity: 1;
+}
+
+/* ─── bonus button ──────────────────────────────────────────────────────── */
+
+.bonus-btn {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@media (max-width: 360px) {
+  .bonus-btn {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .bonus-btn-label {
+    display: none;
   }
 }
