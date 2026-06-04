@@ -1,0 +1,27 @@
+body {
+  background-image: url('bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.main-grid {
+  grid-template-columns: 469px 1fr 469px;
+}
+
+@media (max-width: 1440px) {
+  .main-grid {
+    grid-template-columns: 338px 1fr 338px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-grid {
+    grid-template-columns: 295px 1fr 295px;
+  }
+}
+
+@media (max-width: 992px) {
+  .main-grid {
+    grid-template-columns: 238px 1fr 238px;
+  }
+}
