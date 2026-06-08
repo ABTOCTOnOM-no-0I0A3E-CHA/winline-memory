@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 import { useGameBackend } from './hooks/useGameBackend'
+import { ym } from './hooks/useYM'
 import sport24 from './assets/sport24.svg'
 import cross from './assets/cross.svg'
 import winline from './assets/winline.svg'
@@ -70,6 +71,32 @@ const LEVELS: Pair[][] = [
 
 const TOTAL_LEVELS = LEVELS.length
 const PAIRS_PER_LEVEL = 8
+
+const OBJECT_NAMES: Record<string, string> = {
+  '/ball.webp': 'myach',
+  '/cup.webp': 'kubok',
+  '/whistle.webp': 'svistok',
+  '/gloves.webp': 'perchatki',
+  '/goldenball.webp': 'zolotojmyach',
+  '/flag.webp': 'flag',
+  '/world.webp': 'mir',
+  '/foot.webp': 'butsa',
+  '/bottle.webp': 'butylka',
+  '/bracelet.webp': 'braslet',
+  '/clock.webp': 'chasy',
+  '/field.webp': 'pole',
+  '/hat.webp': 'shapka',
+  '/jar.webp': 'banka',
+  '/memorial.webp': 'memorial',
+  '/pipe.webp': 'truba',
+  '/playercard.webp': 'kartochka',
+  '/score.webp': 'schet',
+  '/screen.webp': 'ekran',
+  '/ticket.webp': 'bilet',
+  '/tornado.webp': 'tornado',
+  '/wear.webp': 'forma',
+  '/wolf.webp': 'volk',
+}
 
 const PLACEHOLDER_COLORS = ['#FF6A13', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B']
 
@@ -483,7 +510,7 @@ function RulesModal({ onClose, onRestart, bonusUrl }: RulesModalProps) {
       <div className="modal-desktop w-full max-w-[469px] mx-auto flex-col gap-[10px]">
         {/* Реклама */}
         <div className="relative rounded-[10px] overflow-hidden">
-          <a href={bonusUrl} target="_blank" rel="noopener noreferrer" className="block aspect-[469/250]">
+          <a href={bonusUrl} target="_blank" rel="noopener noreferrer" onClick={() => ym('banner----conversion')} className="block aspect-[469/250]">
             <img src="/ad.webp" className="w-full h-full object-cover block cursor-pointer" />
           </a>
           <button
@@ -538,7 +565,7 @@ function RulesModal({ onClose, onRestart, bonusUrl }: RulesModalProps) {
       <div className="modal-mobile absolute bottom-0 left-0 right-0 flex-col">
         {/* Реклама с отступами 10px */}
         <div className="relative rounded-[10px] overflow-hidden mx-[10px] mb-[10px]">
-          <a href={bonusUrl} target="_blank" rel="noopener noreferrer" className="block aspect-[469/250]">
+          <a href={bonusUrl} target="_blank" rel="noopener noreferrer" onClick={() => ym('banner----conversion')} className="block aspect-[469/250]">
             <img src="/ad.webp" className="w-full h-full object-cover block cursor-pointer" />
           </a>
           <button
@@ -811,6 +838,7 @@ function App() {
   const startTimeRef = useRef<number>(Date.now())
   const gameStartRef = useRef<number>(Date.now())
   const totalMovesRef = useRef<number>(0)
+  const levelStartFiredRef = useRef(false)
   const { isSoundOn, play, toggleSound } = useSound()
   const { track, bonusUrl } = useGameBackend()
 
@@ -843,6 +871,7 @@ function App() {
     play('click')
     track({ type: 'replayed' })
     track({ type: 'level_started', level: 1 })
+    levelStartFiredRef.current = false
     setLevel(1)
     setDeck(createDeck(1))
     setSelected([])
@@ -862,6 +891,7 @@ function App() {
     const next = level + 1
     play('click')
     track({ type: 'level_started', level: next })
+    levelStartFiredRef.current = false
     setLevel(next)
     setDeck(createDeck(next))
     setSelected([])
@@ -881,6 +911,11 @@ function App() {
       if (selected.includes(id)) return
 
       play('flip')
+
+      if (!levelStartFiredRef.current) {
+        levelStartFiredRef.current = true
+        ym('level-start----interaction', { level: `level-${level}` })
+      }
 
       const newSelected = [...selected, id]
 
@@ -907,6 +942,7 @@ function App() {
               )
             )
             setMatched((m) => m + 1)
+            ym('object-found----interaction', { object: OBJECT_NAMES[first.image] ?? first.image })
             setSelected([])
             setLocked(false)
 
@@ -916,9 +952,11 @@ function App() {
               const levelMoves = moves + 1
               totalMovesRef.current += levelMoves
               track({ type: 'level_completed', level, moves: levelMoves, duration_ms: durationMs })
+              ym('level-finish----interaction', { level: `level-${level}` })
 
               if (level >= TOTAL_LEVELS) {
                 play('gameFinished')
+                ym('game-finished----interaction')
                 track({
                   type: 'game_completed',
                   total_moves: totalMovesRef.current,
@@ -973,6 +1011,7 @@ function App() {
     if (fullPairs.length === 0) return
     const pair = fullPairs[Math.floor(Math.random() * fullPairs.length)]
     play('click')
+    ym('podskazka----interaction')
     track({ type: 'hint_used', level })
     setHintIds(pair)
     setTimeout(() => setHintIds([]), 1500)
@@ -982,15 +1021,21 @@ function App() {
   const claimBonus = useCallback(
     (placement: 'level_popup' | 'special_popup' | 'final_screen') => {
       track({ type: 'bonus_clicked', placement })
+      if (placement === 'level_popup') ym('level-complete----conversion', { level: `level-${level}` })
+      else if (placement === 'special_popup') ym('spec-predmet----conversion')
+      else if (placement === 'final_screen') ym('final----conversion')
       window.open(bonusUrl, '_blank', 'noopener')
     },
-    [track, bonusUrl]
+    [track, bonusUrl, level]
   )
 
   // Клик по кнопке «поделиться»
   const share = useCallback(
     (channel: 'vk' | 'ok' | 'tg') => {
       track({ type: 'shared', channel })
+      if (channel === 'vk') ym('share_vk----interaction')
+      else if (channel === 'tg') ym('share_tg----interaction')
+      else if (channel === 'ok') ym('share_ok----interaction')
     },
     [track]
   )
@@ -1002,18 +1047,22 @@ function App() {
   return (
     <>
       {rulesOpen && (
-        <RulesModal onClose={() => setRulesOpen(false)} onRestart={reset} bonusUrl={bonusUrl} />
+        <RulesModal onClose={() => setRulesOpen(false)} onRestart={() => { ym('reset----interaction'); reset() }} bonusUrl={bonusUrl} />
       )}
       {bonusImage && (
         <BonusModal
           image={bonusImage}
-          onClose={() => setBonusImage(null)}
+          onClose={() => {
+            ym('spec-predmet----interaction')
+            setBonusImage(null)
+          }}
           onClaimBonus={() => claimBonus('special_popup')}
         />
       )}
       {levelCompleteOpen && (
         <LevelCompleteModal
           onClose={() => {
+            ym('level-continue----interaction')
             setLevelCompleteOpen(false)
             nextLevel()
           }}
@@ -1024,9 +1073,21 @@ function App() {
       {/* ══════ DESKTOP HEADER ══════ */}
       <header className="desktop-only flex justify-between items-center px-15 py-5 border-b border-[#E1E1F0] bg-white">
         <div className="text-green-400 flex-1">
-          <img src={sport24} alt="sport24" className="inline logo-sport24" />
+          <img
+            src={sport24}
+            alt="sport24"
+            className="inline logo-sport24 cursor-pointer"
+            onClick={() => ym('sport24----interaction')}
+          />
           <img src={cross} alt="cross" className="inline mx-4 logo-cross" />
-          <img src={winline} alt="winline" className="inline logo-winline" />
+          <a
+            href={bonusUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => ym('logo----conversion')}
+          >
+            <img src={winline} alt="winline" className="inline logo-winline" />
+          </a>
         </div>
 
         <div className="flex justify-center items-center gap-1 flex-1">
@@ -1040,17 +1101,29 @@ function App() {
         </div>
 
         <div className="flex-1 justify-end items-center flex gap-2.5">
-          <SoundButton isSoundOn={isSoundOn} onToggle={toggleSound} />
-          <BonusButton bonusUrl={bonusUrl} />
+          <SoundButton isSoundOn={isSoundOn} onToggle={() => { ym('zvuk----interaction'); toggleSound() }} />
+          <BonusButton bonusUrl={bonusUrl} onClick={() => ym('bonus----conversion')} />
         </div>
       </header>
 
       {/* ══════ MOBILE HEADER ══════ */}
       <header className="mobile-only flex flex-col items-center px-4 py-3 border-b border-[#E1E1F0] bg-white gap-2.5">
         <div className="flex items-center">
-          <img src={sport24} alt="sport24" className="logo-sport24" />
+          <img
+            src={sport24}
+            alt="sport24"
+            className="logo-sport24 cursor-pointer"
+            onClick={() => ym('sport24----interaction')}
+          />
           <img src={cross} alt="cross" className="mx-3 logo-cross" />
-          <img src={winline} alt="winline" className="logo-winline" />
+          <a
+            href={bonusUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => ym('logo----conversion')}
+          >
+            <img src={winline} alt="winline" className="logo-winline" />
+          </a>
         </div>
 
         <div className="flex items-center gap-1">
@@ -1069,7 +1142,7 @@ function App() {
         <WinScreen
           moves={moves}
           elapsed={elapsed}
-          onRestart={reset}
+          onRestart={() => { ym('play_again----interaction'); reset() }}
           onClaimBonus={() => claimBonus('final_screen')}
           onShare={share}
           bonusUrl={bonusUrl}
@@ -1214,7 +1287,7 @@ function App() {
               </ul>
               <button
                 className="btn-outline flex rounded-full border border-[#E1E1F0] py-3 w-full justify-center gap-1"
-                onClick={reset}
+                onClick={() => { ym('reset----interaction'); reset() }}
               >
                 <img src={retry} />
                 <span className="restart-btn-text uppercase font-bold italic">Начать заново</span>
@@ -1224,6 +1297,7 @@ function App() {
               href={bonusUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => ym('banner----conversion')}
               className="block aspect-[469/250] rounded-[10px] shadow-[-2px_4px_3px_rgba(0,0,0,0.02),-2px_4px_3px_rgba(0,0,0,0.02)] bg-gray-400 overflow-hidden cursor-pointer"
             >
               <img src="/ad.webp" className="w-full h-full object-cover" />
@@ -1237,12 +1311,12 @@ function App() {
         <div className="flex items-center gap-2.5">
           <button
             className="btn-outline w-10 h-10 rounded-full border border-[#E1E1F0] flex items-center justify-center"
-            onClick={() => setRulesOpen(true)}
+            onClick={() => { ym('pravila----interaction'); setRulesOpen(true) }}
           >
             <img src={info} alt="info" className="w-5 h-5" />
           </button>
-          <SoundButton isSoundOn={isSoundOn} onToggle={toggleSound} />
-          <BonusButton bonusUrl={bonusUrl} />
+          <SoundButton isSoundOn={isSoundOn} onToggle={() => { ym('zvuk----interaction'); toggleSound() }} />
+          <BonusButton bonusUrl={bonusUrl} onClick={() => ym('bonus----conversion')} />
         </div>
 
         <button
