@@ -1,5 +1,5 @@
 body {
-  background-image: url('bg.png');
+  background-image: url('bg.webp');
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -10,6 +10,8 @@ body {
 
 .main-grid {
   grid-template-columns: 469px 1fr 469px;
+  padding-left: 60px;
+  padding-right: 60px;
 }
 
 @media (max-width: 1440px) {
@@ -21,6 +23,8 @@ body {
 @media (max-width: 1200px) {
   .main-grid {
     grid-template-columns: 295px 1fr 295px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 
@@ -35,6 +39,7 @@ body {
 .title-main {
   font-size: 50px;
   line-height: 50px;
+  white-space: nowrap;
 }
 
 @media (max-width: 1440px) {
@@ -44,7 +49,7 @@ body {
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
   .title-main {
     font-size: 30px;
     line-height: 30px;
@@ -84,30 +89,66 @@ body {
 
 .stat-label {
   font-size: 20px;
-  line-height: 20px;
+  line-height: 30px;
 }
 
 @media (max-width: 1440px) {
   .stat-value {
     font-size: 30px;
-    line-height: 30px;
+    line-height: 25px;
   }
 
   .stat-label {
     font-size: 16px;
-    line-height: 16px;
+    line-height: 15px;
   }
 }
 
-@media (max-width: 992px) {
-  .stat-value {
-    font-size: 24px;
-    line-height: 24px;
+/* ─── level title (УРОВЕНЬ N) ───────────────────────────────────────────── */
+
+.level-title {
+  font-size: 35px;
+  line-height: 35px;
+}
+
+@media (max-width: 1440px) {
+  .level-title {
+    font-size: 30px;
+    line-height: 25px;
+  }
+}
+
+/* ─── right panel: «Как играть», правила, кнопка ────────────────────────── */
+
+.howto-title {
+  font-size: 35px;
+  line-height: 35px;
+}
+
+.rules-text {
+  font-size: 18px;
+  line-height: 25px;
+}
+
+.restart-btn-text {
+  font-size: 20px;
+  line-height: 20px;
+}
+
+@media (max-width: 1440px) {
+  .howto-title {
+    font-size: 30px;
+    line-height: 25px;
   }
 
-  .stat-label {
+  .rules-text {
     font-size: 14px;
-    line-height: 14px;
+    line-height: 20px;
+  }
+
+  .restart-btn-text {
+    font-size: 18px;
+    line-height: 15px;
   }
 }
 
@@ -160,7 +201,7 @@ body {
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
   .card-bonus-ribbon {
     width: 50px;
     height: 50px;
@@ -183,15 +224,15 @@ body {
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
   .desktop-only {
     display: none !important;
   }
 
   .main-grid {
     grid-template-columns: 1fr;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 20px;
+    padding-right: 20px;
     padding-bottom: 70px;
     gap: 0;
   }
@@ -254,6 +295,210 @@ body {
 
 .card-hover:hover::after {
   opacity: 1;
+}
+
+/* ─── card hint highlight (двойной бордер: 3px белый + 2px #FF6A13) ──────── */
+
+.card-hinted {
+  position: relative;
+  z-index: 20;
+  border-radius: 10px;
+  transition: box-shadow 0.3s ease;
+  /* двойной бордер (3px белый + 2px оранжевый) + внешняя тень как при ховере, но наполовину прозрачная */
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 5px #FF6A13,
+    0px 2px 14px rgba(255, 106, 19, 0.3);
+}
+
+/* внутреннее свечение как при ховере, но в половину прозрачности */
+.card-hinted::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 44px #FF6A13;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+/* ─── modal ─────────────────────────────────────────────────────────────── */
+
+.rules-modal-overlay {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* Десктоп-вид модалки: > 720px */
+.modal-desktop {
+  display: flex;
+}
+.modal-mobile {
+  display: none;
+}
+
+/* Мобильный вид модалки: < 720px */
+@media (max-width: 720px) {
+  .modal-desktop {
+    display: none;
+  }
+  .modal-mobile {
+    display: flex;
+    animation: slideUp 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+}
+
+/* ─── bonus modal typography ────────────────────────────────────────────── */
+
+.bonus-modal-title {
+  font-size: 50px;
+  line-height: 50px;
+}
+
+.bonus-modal-text {
+  font-size: 35px;
+  line-height: 40px;
+}
+
+.bonus-modal-btn {
+  font-size: 20px;
+  line-height: 20px;
+}
+
+@media (max-width: 1200px) {
+  .bonus-modal-title {
+    font-size: 40px;
+    line-height: 40px;
+  }
+
+  .bonus-modal-text {
+    font-size: 30px;
+    line-height: 36px;
+  }
+
+  .bonus-modal-btn {
+    font-size: 18px;
+    line-height: 15px;
+  }
+}
+
+@media (max-width: 720px) {
+  .bonus-modal-title {
+    font-size: 30px;
+    line-height: 30px;
+  }
+
+  .bonus-modal-text {
+    font-size: 22px;
+    line-height: 28px;
+  }
+}
+
+/* ─── win screen typography ─────────────────────────────────────────────── */
+
+.win-title {
+  font-size: 50px;
+  line-height: 50px;
+}
+
+.win-subtitle {
+  font-size: 35px;
+  line-height: 35px;
+}
+
+.win-section-label {
+  font-size: 25px;
+  line-height: 25px;
+}
+
+.win-value {
+  font-size: 35px;
+  line-height: 35px;
+}
+
+.win-value-label {
+  font-size: 20px;
+  line-height: 20px;
+}
+
+.win-bonus-text {
+  font-size: 25px;
+  line-height: 25px;
+}
+
+@media (max-width: 1200px) {
+  .win-title {
+    font-size: 40px;
+    line-height: 40px;
+  }
+
+  .win-subtitle {
+    font-size: 30px;
+    line-height: 35px;
+  }
+
+  .win-section-label {
+    font-size: 22px;
+    line-height: 25px;
+  }
+
+  .win-value {
+    font-size: 30px;
+    line-height: 25px;
+  }
+
+  .win-value-label {
+    font-size: 16px;
+    line-height: 15px;
+  }
+
+  .win-bonus-text {
+    font-size: 22px;
+    line-height: 25px;
+  }
+}
+
+@media (max-width: 720px) {
+  .win-title {
+    font-size: 30px;
+    line-height: 30px;
+  }
+
+  .win-subtitle {
+    font-size: 22px;
+    line-height: 25px;
+  }
+
+  .win-section-label {
+    font-size: 18px;
+    line-height: 20px;
+  }
+
+  .win-value {
+    font-size: 22px;
+    line-height: 20px;
+  }
+
+  .win-value-label {
+    font-size: 16px;
+    line-height: 15px;
+  }
+
+  .win-bonus-text {
+    font-size: 18px;
+    line-height: 20px;
+  }
 }
 
 /* ─── bonus button ──────────────────────────────────────────────────────── */
