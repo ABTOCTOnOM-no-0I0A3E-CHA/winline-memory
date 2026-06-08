@@ -35,36 +35,36 @@ type Pair = { image: string; isBonus: boolean }
 const LEVELS: Pair[][] = [
   // Уровень 1
   [
-    { image: './ball.webp', isBonus: false },
-    { image: './cup.webp', isBonus: true },
-    { image: './whistle.webp', isBonus: false },
-    { image: './gloves.webp', isBonus: false },
-    { image: './goldenball.webp', isBonus: false },
-    { image: './flag.webp', isBonus: false },
-    { image: './world.webp', isBonus: false },
-    { image: './foot.webp', isBonus: false },
+    { image: '/ball.webp', isBonus: false },
+    { image: '/cup.webp', isBonus: true },
+    { image: '/whistle.webp', isBonus: false },
+    { image: '/gloves.webp', isBonus: false },
+    { image: '/goldenball.webp', isBonus: false },
+    { image: '/flag.webp', isBonus: false },
+    { image: '/world.webp', isBonus: false },
+    { image: '/foot.webp', isBonus: false },
   ],
   // Уровень 2
   [
-    { image: './bottle.webp', isBonus: false },
-    { image: './bracelet.webp', isBonus: true },
-    { image: './clock.webp', isBonus: false },
-    { image: './field.webp', isBonus: false },
-    { image: './hat.webp', isBonus: false },
-    { image: './jar.webp', isBonus: false },
-    { image: './memorial.webp', isBonus: false },
-    { image: './pipe.webp', isBonus: false },
+    { image: '/bottle.webp', isBonus: false },
+    { image: '/bracelet.webp', isBonus: true },
+    { image: '/clock.webp', isBonus: false },
+    { image: '/field.webp', isBonus: false },
+    { image: '/hat.webp', isBonus: false },
+    { image: '/jar.webp', isBonus: false },
+    { image: '/memorial.webp', isBonus: false },
+    { image: '/pipe.webp', isBonus: false },
   ],
   // Уровень 3
   [
-    { image: './playercard.webp', isBonus: false },
-    { image: './score.webp', isBonus: true },
-    { image: './screen.webp', isBonus: false },
-    { image: './ticket.webp', isBonus: false },
-    { image: './tornado.webp', isBonus: false },
-    { image: './wear.webp', isBonus: false },
-    { image: './wolf.webp', isBonus: false },
-    { image: './pipe.webp', isBonus: false },
+    { image: '/playercard.webp', isBonus: false },
+    { image: '/score.webp', isBonus: true },
+    { image: '/screen.webp', isBonus: false },
+    { image: '/ticket.webp', isBonus: false },
+    { image: '/tornado.webp', isBonus: false },
+    { image: '/wear.webp', isBonus: false },
+    { image: '/wolf.webp', isBonus: false },
+    { image: '/pipe.webp', isBonus: false },
   ],
 ]
 
@@ -147,7 +147,7 @@ function Card({ card, onClick, placeholderColor, hinted }: CardProps) {
           className="absolute inset-0 overflow-hidden rounded-[10px]"
           style={{ backfaceVisibility: 'hidden' }}
         >
-          <img src="./template.webp" className="w-full h-full object-cover" />
+          <img src="/template.webp" className="w-full h-full object-cover" />
         </div>
 
         <div
@@ -186,14 +186,14 @@ function Card({ card, onClick, placeholderColor, hinted }: CardProps) {
 /* ─── звуковая система ──────────────────────────────────────────────────── */
 
 const SOUNDS = {
-  flip: './flip.mp3',
-  correct: './correct.mp3',
-  error: './error.mp3',
-  bonus: './bonus.mp3',
-  click: './click.mp3',
-  levelComplete: './level-complete.mp3',
-  gameFinished: './game-finished.mp3',
-  music: './music.mp3',
+  flip: '/flip.mp3',
+  correct: '/correct.mp3',
+  error: '/error.mp3',
+  bonus: '/bonus.mp3',
+  click: '/click.mp3',
+  levelComplete: '/level-complete.mp3',
+  gameFinished: '/game-finished.mp3',
+  music: '/music.mp3',
 } as const
 
 type SoundName = keyof typeof SOUNDS
@@ -298,7 +298,7 @@ function LevelCompleteModal({
       </div>
 
       <div className="w-48 h-48 mb-5">
-        <img src="./record.webp" className="w-full h-full object-contain" />
+        <img src="/record.webp" className="w-full h-full object-contain" />
       </div>
 
       <p className="bonus-modal-text font-bold italic mb-6 uppercase text-center">
@@ -484,7 +484,7 @@ function RulesModal({ onClose, onRestart, bonusUrl }: RulesModalProps) {
         {/* Реклама */}
         <div className="relative rounded-[10px] overflow-hidden">
           <a href={bonusUrl} target="_blank" rel="noopener noreferrer" className="block aspect-[469/250]">
-            <img src="./ad.webp" className="w-full h-full object-cover block cursor-pointer" />
+            <img src="/ad.webp" className="w-full h-full object-cover block cursor-pointer" />
           </a>
           <button
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow"
@@ -539,7 +539,7 @@ function RulesModal({ onClose, onRestart, bonusUrl }: RulesModalProps) {
         {/* Реклама с отступами 10px */}
         <div className="relative rounded-[10px] overflow-hidden mx-[10px] mb-[10px]">
           <a href={bonusUrl} target="_blank" rel="noopener noreferrer" className="block aspect-[469/250]">
-            <img src="./ad.webp" className="w-full h-full object-cover block cursor-pointer" />
+            <img src="/ad.webp" className="w-full h-full object-cover block cursor-pointer" />
           </a>
           <button
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow"
@@ -691,7 +691,7 @@ function WinScreen({
               className="w-10 h-10 rounded-full flex items-center justify-center"
               style={{ background: '#0077FF' }}
             >
-              <img src="./vk.svg" />
+              <img src="/vk.svg" />
             </a>
             <a
               href={`https://t.me/share/url?url=${shareUrl}`}
@@ -701,7 +701,7 @@ function WinScreen({
               className="w-10 h-10 rounded-full flex items-center justify-center"
               style={{ background: '#29B6F6' }}
             >
-              <img src="./tg.svg" />
+              <img src="/tg.svg" />
             </a>
             <a
               href={`https://connect.ok.ru/offer?url=${shareUrl}`}
@@ -711,7 +711,7 @@ function WinScreen({
               className="w-10 h-10 rounded-full flex items-center justify-center"
               style={{ background: '#EE8208' }}
             >
-              <img src="./ok.svg" />
+              <img src="/ok.svg" />
             </a>
           </div>
         </div>
@@ -752,7 +752,7 @@ function WinScreen({
       <div
         className="desktop-only flex-1 flex flex-col"
         style={{
-          backgroundImage: 'url(./win.webp)',
+          backgroundImage: 'url(/win.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           minHeight: 'calc(100vh - 81px)',
@@ -775,7 +775,7 @@ function WinScreen({
       <div
         className="mobile-only fixed inset-0 z-[48] pointer-events-none"
         style={{
-          backgroundImage: 'url(./win.webp)',
+          backgroundImage: 'url(/win.webp)',
           backgroundSize: 'cover',
           backgroundPosition: '50% -80px',
         }}
@@ -932,7 +932,7 @@ function App() {
             } else if (isBonus) {
               play('bonus')
               track({ type: 'special_pair_found', level })
-              setBonusImage(first.image || './foot.webp')
+              setBonusImage(first.image || '/foot.webp')
             } else {
               play('correct')
             }
@@ -1226,7 +1226,7 @@ function App() {
               rel="noopener noreferrer"
               className="block aspect-[469/250] rounded-[10px] shadow-[-2px_4px_3px_rgba(0,0,0,0.02),-2px_4px_3px_rgba(0,0,0,0.02)] bg-gray-400 overflow-hidden cursor-pointer"
             >
-              <img src="./ad.webp" className="w-full h-full object-cover" />
+              <img src="/ad.webp" className="w-full h-full object-cover" />
             </a>
           </div>
         </main>
