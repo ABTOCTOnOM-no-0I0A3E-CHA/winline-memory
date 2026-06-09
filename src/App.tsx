@@ -1303,7 +1303,7 @@ function App() {
           </div>
 
           {/* ── Игровое поле 4×4 ── */}
-          <div className="card-grid grid grid-cols-4 gap-2 content-start">
+          <div className="card-grid grid grid-cols-4 gap-2.5 content-start">
             {deck.map((card) => (
               <Card
                 key={card.id}
