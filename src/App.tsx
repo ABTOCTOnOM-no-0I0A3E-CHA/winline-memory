@@ -146,9 +146,10 @@ interface CardProps {
   onClick: () => void
   placeholderColor?: string
   hinted?: boolean
+  flashing?: boolean
 }
 
-function Card({ card, onClick, placeholderColor, hinted }: CardProps) {
+function Card({ card, onClick, placeholderColor, hinted, flashing }: CardProps) {
   const { isFlipped, isMatched, image, isBonus } = card
   const open = isFlipped || isMatched
 
@@ -156,7 +157,7 @@ function Card({ card, onClick, placeholderColor, hinted }: CardProps) {
     <div
       className={`aspect-square cursor-pointer rounded-[10px] ${open ? '' : 'card-hover'} ${
         hinted && !open ? 'card-hinted' : ''
-      }`}
+      } ${flashing ? 'card-matched-flash' : ''}`}
       style={{ perspective: '800px' }}
       onClick={onClick}
     >
@@ -179,7 +180,7 @@ function Card({ card, onClick, placeholderColor, hinted }: CardProps) {
 
         <div
           className={`absolute inset-0 overflow-hidden rounded-[10px] bg-[#E1E1F0] ${
-            isBonus ? 'border-2 border-[#FF6A13]' : ''
+            isBonus || isMatched ? 'border-2 border-[#FF6A13]' : ''
           }`}
           style={{
             backfaceVisibility: 'hidden',
@@ -187,7 +188,7 @@ function Card({ card, onClick, placeholderColor, hinted }: CardProps) {
           }}
         >
           {image ? (
-            <img src={image} className="w-full h-full object-contain mix-blend-darken p-2.5" />
+            <img src={image} className="w-full h-full object-contain mix-blend-darken p-1" />
           ) : (
             <div
               className="w-full h-full flex items-center justify-center"
@@ -636,7 +637,7 @@ function BonusButton({ bonusUrl, onClick }: { bonusUrl: string; onClick?: () => 
         viewBox="0 0 20 20"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute -top-1.25 -right-1.25"
+        className="bonus-badge absolute -top-1.25 -right-1.25"
       >
         <rect width="20" height="20" rx="10" fill="#FF6A13" />
         <path
@@ -644,7 +645,7 @@ function BonusButton({ bonusUrl, onClick }: { bonusUrl: string; onClick?: () => 
           fill="white"
         />
       </svg>
-      <img src={gift} />
+      <img src={gift} className="bonus-gift-icon" />
       <p className="bonus-btn-label font-winline text-[20px]/[20px] font-bold italic">БОНУС</p>
     </a>
   )
@@ -685,7 +686,7 @@ function WinScreen({
       </div>
 
       <p className="win-subtitle font-bold italic mb-5 uppercase">
-        Поздравляем! Ты прошёл все уровни!
+        Поздравляем! Ты прошел все уровни!
       </p>
 
       <div className="grid gap-2.5 grid-cols-2 w-full mb-2.5 rounded-[10px] overflow-hidden">
@@ -829,11 +830,14 @@ function App() {
   const [matched, setMatched] = useState(0)
   const [locked, setLocked] = useState(false)
   const [hintIds, setHintIds] = useState<number[]>([])
-  const [rulesOpen, setRulesOpen] = useState(true)
+  const [matchFlashIds, setMatchFlashIds] = useState<number[]>([])
+  const [rulesOpen, setRulesOpen] = useState(false)
   const [bonusImage, setBonusImage] = useState<string | null>(null)
   const [winOpen, setWinOpen] = useState(false)
   const [levelCompleteOpen, setLevelCompleteOpen] = useState(false)
   const [elapsed, setElapsed] = useState(0)
+  const [winMoves, setWinMoves] = useState(0)
+  const [winElapsed, setWinElapsed] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number>(Date.now())
   const gameStartRef = useRef<number>(Date.now())
@@ -943,6 +947,8 @@ function App() {
             )
             setMatched((m) => m + 1)
             ym('object-found----interaction', { object: OBJECT_NAMES[first.image] ?? first.image })
+            setMatchFlashIds([firstId, secondId])
+            setTimeout(() => setMatchFlashIds([]), 700)
             setSelected([])
             setLocked(false)
 
@@ -962,6 +968,8 @@ function App() {
                   total_moves: totalMovesRef.current,
                   total_duration_ms: Date.now() - gameStartRef.current,
                 })
+                setWinMoves(totalMovesRef.current)
+                setWinElapsed(Math.round((Date.now() - gameStartRef.current) / 1000))
                 setTimeout(() => setWinOpen(true), 400)
               } else {
                 play('levelComplete')
@@ -1014,7 +1022,7 @@ function App() {
     ym('podskazka----interaction')
     track({ type: 'hint_used', level })
     setHintIds(pair)
-    setTimeout(() => setHintIds([]), 1500)
+    setTimeout(() => setHintIds([]), 2500)
   }, [deck, locked, won, play, track, level])
 
   // Клик по «Забрать бонус» — аналитика + переход на ссылку Winline
@@ -1073,12 +1081,14 @@ function App() {
       {/* ══════ DESKTOP HEADER ══════ */}
       <header className="desktop-only flex justify-between items-center px-15 py-5 border-b border-[#E1E1F0] bg-white">
         <div className="text-green-400 flex-1">
-          <img
-            src={sport24}
-            alt="sport24"
-            className="inline logo-sport24 cursor-pointer"
+          <a
+            href="https://sport24.ru/"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => ym('sport24----interaction')}
-          />
+          >
+            <img src={sport24} alt="sport24" className="inline logo-sport24" />
+          </a>
           <img src={cross} alt="cross" className="inline mx-4 logo-cross" />
           <a
             href={bonusUrl}
@@ -1109,12 +1119,14 @@ function App() {
       {/* ══════ MOBILE HEADER ══════ */}
       <header className="mobile-only flex flex-col items-center px-4 py-3 border-b border-[#E1E1F0] bg-white gap-2.5">
         <div className="flex items-center">
-          <img
-            src={sport24}
-            alt="sport24"
-            className="logo-sport24 cursor-pointer"
+          <a
+            href="https://sport24.ru/"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => ym('sport24----interaction')}
-          />
+          >
+            <img src={sport24} alt="sport24" className="logo-sport24" />
+          </a>
           <img src={cross} alt="cross" className="mx-3 logo-cross" />
           <a
             href={bonusUrl}
@@ -1140,8 +1152,8 @@ function App() {
       {/* ══════ WIN SCREEN ══════ */}
       {winOpen && (
         <WinScreen
-          moves={moves}
-          elapsed={elapsed}
+          moves={winMoves}
+          elapsed={winElapsed}
           onRestart={() => { ym('play_again----interaction'); reset() }}
           onClaimBonus={() => claimBonus('final_screen')}
           onShare={share}
@@ -1184,7 +1196,7 @@ function App() {
               <div className="grid grid-cols-[1fr_1px_1fr] mb-6">
                 <div className="text-center font-bold italic">
                   <p className="stat-value mb-1">{timeStr}</p>
-                  <p className="stat-label uppercase">твоё время</p>
+                  <p className="stat-label uppercase">твое время</p>
                 </div>
                 <GradientDivider id="grad2" />
                 <div className="text-center font-bold italic">
@@ -1249,7 +1261,7 @@ function App() {
           </div>
 
           {/* ── Игровое поле 4×4 ── */}
-          <div className="grid grid-cols-4 gap-2.5 content-start">
+          <div className="grid grid-cols-4 gap-2 content-start">
             {deck.map((card) => (
               <Card
                 key={card.id}
@@ -1257,6 +1269,7 @@ function App() {
                 onClick={() => handleClick(card.id)}
                 placeholderColor={PLACEHOLDER_COLORS[card.pairId - 3] ?? '#999'}
                 hinted={hintIds.includes(card.id)}
+                flashing={matchFlashIds.includes(card.id)}
               />
             ))}
           </div>
