@@ -101,6 +101,35 @@ const OBJECT_NAMES: Record<string, string> = {
 
 const PLACEHOLDER_COLORS = ['#FF6A13', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B']
 
+/* ─── localStorage: среднее время прохождения уровня ────────────────────── */
+
+function getLevelTimes(lvl: number): number[] {
+  try {
+    const raw = localStorage.getItem(`wl_times_${lvl}`)
+    return raw ? (JSON.parse(raw) as number[]) : []
+  } catch {
+    return []
+  }
+}
+
+function saveLevelTime(lvl: number, secs: number) {
+  const times = getLevelTimes(lvl)
+  times.push(secs)
+  try {
+    localStorage.setItem(`wl_times_${lvl}`, JSON.stringify(times.slice(-20)))
+  } catch {}
+}
+
+function calcAvgTime(lvl: number): number | null {
+  const times = getLevelTimes(lvl)
+  if (times.length === 0) return null
+  return Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+}
+
+function fmtTime(secs: number): string {
+  return `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`
+}
+
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
 }
@@ -843,6 +872,7 @@ function App() {
   const [elapsed, setElapsed] = useState(0)
   const [winMoves, setWinMoves] = useState(0)
   const [winElapsed, setWinElapsed] = useState(0)
+  const [avgTime, setAvgTime] = useState<number | null>(() => calcAvgTime(1))
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number>(Date.now())
   const gameStartRef = useRef<number>(Date.now())
@@ -882,6 +912,7 @@ function App() {
     track({ type: 'level_started', level: 1 })
     levelStartFiredRef.current = false
     setLevel(1)
+    setAvgTime(calcAvgTime(1))
     setDeck(createDeck(1))
     setSelected([])
     setMoves(0)
@@ -903,6 +934,7 @@ function App() {
     track({ type: 'level_started', level: next })
     levelStartFiredRef.current = false
     setLevel(next)
+    setAvgTime(calcAvgTime(next))
     setDeck(createDeck(next))
     setSelected([])
     setMoves(0)
@@ -966,6 +998,7 @@ function App() {
               totalMovesRef.current += levelMoves
               track({ type: 'level_completed', level, moves: levelMoves, duration_ms: durationMs })
               ym('level-finish----interaction', { level: `level-${level}` })
+              saveLevelTime(level, Math.round(durationMs / 1000))
 
               if (level >= TOTAL_LEVELS) {
                 play('gameFinished')
@@ -1208,7 +1241,7 @@ function App() {
                 </div>
                 <GradientDivider id="grad2" />
                 <div className="text-center font-bold italic">
-                  <p className="stat-value mb-1">—</p>
+                  <p className="stat-value mb-1">{avgTime !== null ? fmtTime(avgTime) : '—'}</p>
                   <p className="stat-label uppercase">среднее время</p>
                 </div>
               </div>
@@ -1254,7 +1287,7 @@ function App() {
               </div>
               <GradientDivider id="mgrad3" />
               <div className="text-center font-bold italic">
-                <p className="text-[22px]/[22px] mb-1">—</p>
+                <p className="text-[22px]/[22px] mb-1">{avgTime !== null ? fmtTime(avgTime) : '—'}</p>
                 <p className="text-[12px]/[12px] uppercase">среднее</p>
               </div>
             </div>
