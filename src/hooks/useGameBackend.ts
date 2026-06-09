@@ -3,9 +3,42 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getBonus, ingestEvents, startGame } from '../api'
 import type { AnalyticsEvent } from '../api'
+import { getYMClientId } from './useYM'
+import { getSourceFromUTM } from '../utils/utm'
 
 const FLUSH_INTERVAL_MS = 5000
 const DEFAULT_BONUS_URL = 'https://winline.ru'
+
+/**
+ * Injects sub4 (UTM-matched source) and sub5 (YM clientId) into the bonus URL.
+ *
+ * The backend stores the URL with literal placeholders:
+ *   …&sub4={source}&sub5={YM_CLIENT_ID}&…
+ *
+ * We replace them with the actual values. If the URL doesn't contain the
+ * placeholders (old backend format), we append sub4/sub5 as extra params.
+ */
+async function enrichBonusUrl(rawUrl: string): Promise<string> {
+  const sub4 = getSourceFromUTM()
+  const sub5 = await getYMClientId()
+
+  // Replace literal {source} / {YM_CLIENT_ID} placeholders (URL-encoded or plain)
+  let url = rawUrl
+    .replace(/%7Bsource%7D/gi, encodeURIComponent(sub4))
+    .replace(/{source}/gi, encodeURIComponent(sub4))
+    .replace(/%7BYM_CLIENT_ID%7D/gi, encodeURIComponent(sub5))
+    .replace(/{YM_CLIENT_ID}/gi, encodeURIComponent(sub5))
+
+  // If no placeholders were found, append the params directly
+  if (url === rawUrl) {
+    const u = new URL(url)
+    if (sub4) u.searchParams.set('sub4', sub4)
+    if (sub5) u.searchParams.set('sub5', sub5)
+    url = u.toString()
+  }
+
+  return url
+}
 
 export function useGameBackend() {
   const tokenRef = useRef<string | null>(null)
@@ -24,8 +57,10 @@ export function useGameBackend() {
       .catch((e) => console.warn('[backend] game:start failed', e))
 
     getBonus()
-      .then((bonus) => {
-        if (!cancelled && bonus?.url) setBonusUrl(bonus.url)
+      .then(async (bonus) => {
+        if (cancelled || !bonus?.url) return
+        const enriched = await enrichBonusUrl(bonus.url)
+        if (!cancelled) setBonusUrl(enriched)
       })
       .catch((e) => console.warn('[backend] bonus failed', e))
 
