@@ -14,34 +14,43 @@ body {
   padding-right: 60px;
 }
 
+/* 1440–1920px */
 @media (max-width: 1440px) {
   .main-grid {
-    grid-template-columns: 338px 1fr 338px;
+    grid-template-columns: 310px 1fr 310px;
     padding-left: 40px;
     padding-right: 40px;
   }
 }
 
-/* Раньше переключаемся на узкие сайдбары, чтобы игровое поле не сжималось */
+/* 1280–1440px: раньше переключаемся, пока поле не стало уже панелей */
 @media (max-width: 1360px) {
   .main-grid {
-    grid-template-columns: 295px 1fr 295px;
+    grid-template-columns: 270px 1fr 270px;
     padding-left: 20px;
     padding-right: 20px;
   }
 }
 
+/* 992–1200px */
 @media (max-width: 1200px) {
   .main-grid {
-    grid-template-columns: 295px 1fr 295px;
+    grid-template-columns: 245px 1fr 245px;
     padding-left: 20px;
     padding-right: 20px;
+  }
+}
+
+/* 992–1100px: самый узкий десктоп */
+@media (max-width: 1100px) {
+  .main-grid {
+    grid-template-columns: 215px 1fr 215px;
   }
 }
 
 @media (max-width: 992px) {
   .main-grid {
-    grid-template-columns: 238px 1fr 238px;
+    grid-template-columns: 200px 1fr 200px;
   }
 }
 
@@ -105,13 +114,25 @@ body {
 
 @media (max-width: 1440px) {
   .stat-value {
-    font-size: 30px;
-    line-height: 25px;
+    font-size: 28px;
+    line-height: 28px;
   }
 
   .stat-label {
-    font-size: 16px;
-    line-height: 15px;
+    font-size: 14px;
+    line-height: 16px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .stat-value {
+    font-size: 24px;
+    line-height: 24px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    line-height: 14px;
   }
 }
 
@@ -124,8 +145,15 @@ body {
 
 @media (max-width: 1440px) {
   .level-title {
-    font-size: 30px;
-    line-height: 25px;
+    font-size: 28px;
+    line-height: 28px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .level-title {
+    font-size: 24px;
+    line-height: 24px;
   }
 }
 
@@ -148,8 +176,8 @@ body {
 
 @media (max-width: 1440px) {
   .howto-title {
-    font-size: 30px;
-    line-height: 25px;
+    font-size: 28px;
+    line-height: 28px;
   }
 
   .rules-text {
@@ -158,8 +186,25 @@ body {
   }
 
   .restart-btn-text {
-    font-size: 18px;
-    line-height: 15px;
+    font-size: 16px;
+    line-height: 16px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .howto-title {
+    font-size: 22px;
+    line-height: 22px;
+  }
+
+  .rules-text {
+    font-size: 12px;
+    line-height: 17px;
+  }
+
+  .restart-btn-text {
+    font-size: 14px;
+    line-height: 14px;
   }
 }
 
