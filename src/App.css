@@ -236,6 +236,10 @@ body {
 }
 
 @media (max-width: 991.98px) {
+  .card-grid {
+    gap: 5px;
+  }
+
   .desktop-only {
     display: none !important;
   }
