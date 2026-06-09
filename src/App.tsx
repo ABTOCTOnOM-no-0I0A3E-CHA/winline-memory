@@ -34,38 +34,38 @@ type Pair = { image: string; isBonus: boolean }
 
 /** Каждый уровень — свой набор из 8 пар (одна бонусная). */
 const LEVELS: Pair[][] = [
-  // Уровень 1
+  // Уровень 1: базовые футбольные предметы
   [
-    { image: '/ball.webp', isBonus: false },
-    { image: '/cup.webp', isBonus: true },
-    { image: '/whistle.webp', isBonus: false },
-    { image: '/gloves.webp', isBonus: false },
-    { image: '/goldenball.webp', isBonus: false },
-    { image: '/flag.webp', isBonus: false },
-    { image: '/world.webp', isBonus: false },
-    { image: '/foot.webp', isBonus: false },
+    { image: '/ball.webp', isBonus: true },       // мяч (Trionda ЧМ-2026) — особый
+    { image: '/foot.webp', isBonus: false },       // бутса
+    { image: '/whistle.webp', isBonus: false },    // свисток
+    { image: '/cup.webp', isBonus: true },         // кубок ЧМ — особый
+    { image: '/wear.webp', isBonus: false },       // футбольная форма
+    { image: '/gloves.webp', isBonus: false },     // вратарские перчатки
+    { image: '/bracelet.webp', isBonus: false },   // капитанская повязка
+    { image: '/cards.webp', isBonus: false },      // судейские карточки
   ],
-  // Уровень 2
+  // Уровень 2: отсылки к ЧМ-2026
   [
-    { image: '/bottle.webp', isBonus: false },
-    { image: '/bracelet.webp', isBonus: true },
-    { image: '/clock.webp', isBonus: false },
-    { image: '/field.webp', isBonus: false },
-    { image: '/hat.webp', isBonus: false },
-    { image: '/jar.webp', isBonus: false },
-    { image: '/memorial.webp', isBonus: false },
-    { image: '/pipe.webp', isBonus: false },
+    { image: '/ticket.webp', isBonus: true },      // золотой билет — особый
+    { image: '/flag.webp', isBonus: true },        // флаг с цифрой 48 — особый
+    { image: '/hat.webp', isBonus: false },        // сомбреро
+    { image: '/bottle.webp', isBonus: false },     // кленовый сироп
+    { image: '/memorial.webp', isBonus: false },   // статуя свободы
+    { image: '/tornado.webp', isBonus: false },    // торнадо/шторм
+    { image: '/wolf.webp', isBonus: false },       // талисман (волк Lobo)
+    { image: '/world.webp', isBonus: false },      // глобус / карта мира
   ],
-  // Уровень 3
+  // Уровень 3: легендарные символы футбола
   [
-    { image: '/playercard.webp', isBonus: false },
-    { image: '/score.webp', isBonus: true },
-    { image: '/screen.webp', isBonus: false },
-    { image: '/ticket.webp', isBonus: false },
-    { image: '/tornado.webp', isBonus: false },
-    { image: '/wear.webp', isBonus: false },
-    { image: '/wolf.webp', isBonus: false },
-    { image: '/pipe.webp', isBonus: false },
+    { image: '/goldenball.webp', isBonus: true },  // золотой мяч — особый
+    { image: '/playercard.webp', isBonus: true },  // карточка Panini — особый
+    { image: '/pipe.webp', isBonus: false },       // вувузела
+    { image: '/screen.webp', isBonus: false },     // VAR-монитор
+    { image: '/score.webp', isBonus: false },      // счёт 5:0 на табло
+    { image: '/field.webp', isBonus: false },      // тактическая доска
+    { image: '/jar.webp', isBonus: false },        // судейский спрей
+    { image: '/clock.webp', isBonus: false },      // счётчик добавленного времени
   ],
 ]
 
@@ -78,24 +78,25 @@ const OBJECT_NAMES: Record<string, string> = {
   '/whistle.webp': 'svistok',
   '/gloves.webp': 'perchatki',
   '/goldenball.webp': 'zolotojmyach',
-  '/flag.webp': 'flag',
-  '/world.webp': 'mir',
+  '/flag.webp': 'flag48',
+  '/world.webp': 'globus',
   '/foot.webp': 'butsa',
-  '/bottle.webp': 'butylka',
-  '/bracelet.webp': 'braslet',
-  '/clock.webp': 'chasy',
-  '/field.webp': 'pole',
-  '/hat.webp': 'shapka',
-  '/jar.webp': 'banka',
-  '/memorial.webp': 'memorial',
-  '/pipe.webp': 'truba',
-  '/playercard.webp': 'kartochka',
-  '/score.webp': 'schet',
-  '/screen.webp': 'ekran',
+  '/bottle.webp': 'klensirop',
+  '/bracelet.webp': 'povyazka',
+  '/clock.webp': 'dobvremya',
+  '/field.webp': 'taktdoska',
+  '/hat.webp': 'sombrero',
+  '/jar.webp': 'sprey',
+  '/memorial.webp': 'statua',
+  '/pipe.webp': 'vuvuzela',
+  '/playercard.webp': 'kartochka-panini',
+  '/score.webp': 'schet-50',
+  '/screen.webp': 'var-monitor',
   '/ticket.webp': 'bilet',
   '/tornado.webp': 'tornado',
   '/wear.webp': 'forma',
-  '/wolf.webp': 'volk',
+  '/wolf.webp': 'lobo',
+  '/cards.webp': 'kartochki',
 }
 
 const PLACEHOLDER_COLORS = ['#FF6A13', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B']
@@ -672,6 +673,9 @@ function WinScreen({
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
   const ss = String(elapsed % 60).padStart(2, '0')
   const timeStr = `${mm}:${ss}`
+  const shareText = encodeURIComponent(
+    `Я прошел «Футбольное мемори» за ${moves} ходов ${timeStr}! Проверь, сможешь ли ты побить мой результат: ${bonusUrl}`
+  )
 
   const cardContent = (
     <>
@@ -709,10 +713,10 @@ function WinScreen({
           </div>
         </div>
         <div className="p-4 border rounded-[10px] border-[#E1E1F0]">
-          <p className="win-section-label font-bold italic uppercase mb-1">Поделиться</p>
+          <p className="win-section-label font-bold italic uppercase mb-1">Поделиться результатом</p>
           <div className="flex gap-2 justify-center">
             <a
-              href={`https://vk.com/share.php?url=${shareUrl}`}
+              href={`https://vk.com/share.php?url=${shareUrl}&title=${shareText}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => onShare('vk')}
@@ -722,7 +726,7 @@ function WinScreen({
               <img src="/vk.svg" />
             </a>
             <a
-              href={`https://t.me/share/url?url=${shareUrl}`}
+              href={`https://t.me/share/url?url=${shareUrl}&text=${shareText}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => onShare('tg')}
@@ -732,7 +736,7 @@ function WinScreen({
               <img src="/tg.svg" />
             </a>
             <a
-              href={`https://connect.ok.ru/offer?url=${shareUrl}`}
+              href={`https://connect.ok.ru/offer?url=${shareUrl}&st.comments=${shareText}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => onShare('ok')}
@@ -831,6 +835,7 @@ function App() {
   const [locked, setLocked] = useState(false)
   const [hintIds, setHintIds] = useState<number[]>([])
   const [matchFlashIds, setMatchFlashIds] = useState<number[]>([])
+  const [hintCooldown, setHintCooldown] = useState(false)
   const [rulesOpen, setRulesOpen] = useState(false)
   const [bonusImage, setBonusImage] = useState<string | null>(null)
   const [winOpen, setWinOpen] = useState(false)
@@ -884,6 +889,7 @@ function App() {
     setLocked(false)
     setWinOpen(false)
     setHintIds([])
+    setHintCooldown(false)
     setElapsed(0)
     gameStartRef.current = Date.now()
     totalMovesRef.current = 0
@@ -903,6 +909,7 @@ function App() {
     setMatched(0)
     setLocked(false)
     setHintIds([])
+    setHintCooldown(false)
     setElapsed(0)
     startTimer()
   }, [level, play, track, startTimer])
@@ -1004,10 +1011,9 @@ function App() {
 
   const won = matchedPairs === totalPairs
 
-  // Подсказка — кратко показать все неоткрытые карточки
+  // Подсказка — подсветить случайную пару (cooldown 7 сек по ТЗ)
   const handleHint = useCallback(() => {
-    if (locked || won) return
-    // Собираем неоткрытые карточки по парам, берём случайную полную пару
+    if (locked || won || hintCooldown) return
     const byPair = new Map<number, number[]>()
     for (const c of deck) {
       if (c.isMatched || c.isFlipped) continue
@@ -1022,8 +1028,10 @@ function App() {
     ym('podskazka----interaction')
     track({ type: 'hint_used', level })
     setHintIds(pair)
+    setHintCooldown(true)
     setTimeout(() => setHintIds([]), 2500)
-  }, [deck, locked, won, play, track, level])
+    setTimeout(() => setHintCooldown(false), 7000)
+  }, [deck, locked, won, hintCooldown, play, track, level])
 
   // Клик по «Забрать бонус» — аналитика + переход на ссылку Winline
   const claimBonus = useCallback(
@@ -1206,8 +1214,9 @@ function App() {
               </div>
 
               <button
-                className="btn-primary bg-[#FF6A13] rounded-full flex justify-center gap-1 w-full py-2.5"
+                className={`btn-primary rounded-full flex justify-center gap-1 w-full py-2.5 transition-opacity ${hintCooldown ? 'bg-[#ccc] opacity-60 cursor-not-allowed' : 'bg-[#FF6A13]'}`}
                 onClick={handleHint}
+                disabled={hintCooldown}
               >
                 <img src={light} />
                 <span className="text-[20px]/[20px] font-bold italic text-white uppercase">
@@ -1333,8 +1342,9 @@ function App() {
         </div>
 
         <button
-          className="btn-primary bg-[#FF6A13] rounded-full flex items-center gap-1 px-5 py-2.5"
+          className={`btn-primary rounded-full flex items-center gap-1 px-5 py-2.5 transition-opacity ${hintCooldown ? 'bg-[#ccc] opacity-60 cursor-not-allowed' : 'bg-[#FF6A13]'}`}
           onClick={handleHint}
+          disabled={hintCooldown}
         >
           <img src={light} />
           <span className="text-[16px]/[16px] font-bold italic text-white uppercase">подсказка</span>
