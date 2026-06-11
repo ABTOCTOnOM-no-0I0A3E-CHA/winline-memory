@@ -335,9 +335,11 @@ function GiftIconWhite() {
 /* ─── модальное окно "Уровень пройден" ─────────────────────────────────── */
 
 function LevelCompleteModal({
+  image,
   onClose,
   onClaimBonus,
 }: {
+  image: string
   onClose: () => void
   onClaimBonus: () => void
 }) {
@@ -356,7 +358,7 @@ function LevelCompleteModal({
       </div>
 
       <div className="w-48 h-48 mb-5">
-        <img src="/record.webp" className="w-full h-full object-contain" />
+        <img src={image} className="w-full h-full object-contain" />
       </div>
 
       <p className="bonus-modal-text font-bold italic mb-6 uppercase text-center">
@@ -689,21 +691,20 @@ function WinScreen({
   onRestart,
   onClaimBonus,
   onShare,
-  bonusUrl,
 }: {
   moves: number
   elapsed: number
   onRestart: () => void
   onClaimBonus: () => void
   onShare: (channel: 'vk' | 'ok' | 'tg') => void
-  bonusUrl: string
 }) {
-  const shareUrl = encodeURIComponent(bonusUrl)
+  const GAME_URL = 'https://memocup.sport24.ru'
+  const shareUrl = encodeURIComponent(GAME_URL)
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
   const ss = String(elapsed % 60).padStart(2, '0')
   const timeStr = `${mm}:${ss}`
   const shareText = encodeURIComponent(
-    `Я прошел «Футбольное мемори» за ${moves} ходов ${timeStr}! Проверь, сможешь ли ты побить мой результат: ${bonusUrl}`
+    `Я прошел «Футбольное мемори» за ${moves} ходов! Мое время – ${timeStr}. Проверь, сможешь ли ты побить мой результат? ${GAME_URL}`
   )
 
   const cardContent = (
@@ -1062,8 +1063,10 @@ function App() {
     track({ type: 'hint_used', level })
     setHintIds(pair)
     setHintCooldown(true)
-    setTimeout(() => setHintIds([]), 2500)
-    setTimeout(() => setHintCooldown(false), 7000)
+    setTimeout(() => {
+      setHintIds([])
+      setHintCooldown(false)
+    }, 1500)
   }, [deck, locked, won, hintCooldown, play, track, level])
 
   // Клик по «Забрать бонус» — аналитика + переход на ссылку Winline
@@ -1110,6 +1113,7 @@ function App() {
       )}
       {levelCompleteOpen && (
         <LevelCompleteModal
+          image={level === 1 ? '/record.webp' : '/20.png'}
           onClose={() => {
             ym('level-continue----interaction')
             setLevelCompleteOpen(false)
@@ -1198,7 +1202,6 @@ function App() {
           onRestart={() => { ym('play_again----interaction'); reset() }}
           onClaimBonus={() => claimBonus('final_screen')}
           onShare={share}
-          bonusUrl={bonusUrl}
         />
       )}
 

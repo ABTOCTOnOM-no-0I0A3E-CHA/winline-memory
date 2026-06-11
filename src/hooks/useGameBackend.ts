@@ -7,7 +7,10 @@ import { getYMClientId } from './useYM'
 import { getSourceFromUTM } from '../utils/utm'
 
 const FLUSH_INTERVAL_MS = 5000
-const DEFAULT_BONUS_URL = 'https://winline.ru'
+
+/** Актуальная промо-ссылка с плейсхолдерами sub4/sub5. */
+const PROMO_URL =
+  'https://p.winline.ru/s/9rat_E9_a7?statid=6344_sport24&sub=sport24&sub2=spec&sub3=memocup&sub4=%7Bsource%7D&sub5=%7BYM_CLIENT_ID%7D&promocode=SPORT24'
 
 /**
  * Injects sub4 (UTM-matched source) and sub5 (YM clientId) into the bonus URL.
@@ -44,11 +47,16 @@ export function useGameBackend() {
   const tokenRef = useRef<string | null>(null)
   const queueRef = useRef<AnalyticsEvent[]>([])
   const flushingRef = useRef(false)
-  const [bonusUrl, setBonusUrl] = useState<string>(DEFAULT_BONUS_URL)
+  const [bonusUrl, setBonusUrl] = useState<string>(PROMO_URL)
 
   // Init: create game session + load bonus url
   useEffect(() => {
     let cancelled = false
+
+    // Enrich the hardcoded promo URL with sub4/sub5 immediately (no backend needed)
+    enrichBonusUrl(PROMO_URL).then((enriched) => {
+      if (!cancelled) setBonusUrl(enriched)
+    })
 
     startGame()
       .then((session) => {
@@ -56,6 +64,7 @@ export function useGameBackend() {
       })
       .catch((e) => console.warn('[backend] game:start failed', e))
 
+    // Backend may override with a different URL (future-proof)
     getBonus()
       .then(async (bonus) => {
         if (cancelled || !bonus?.url) return

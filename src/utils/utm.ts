@@ -118,8 +118,9 @@ const CAMPAIGN_MAP: Record<string, string> = {
   'sberads|promo|sberads5': 'source_97',
 }
 
-/* ─── source|medium lookup (youtube) ────────────────────────────────────── */
+/* ─── source|medium lookup (vk, youtube) ────────────────────────────────── */
 const SOURCE_MEDIUM_MAP: Record<string, string> = {
+  'vk_ads|cpa': 'source_1',
   'youtube|video': 'source_79',
   'youtube|community': 'source_80',
 }
