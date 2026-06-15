@@ -874,13 +874,14 @@ function App() {
   const [winMoves, setWinMoves] = useState(0)
   const [winElapsed, setWinElapsed] = useState(0)
   const [avgTime, setAvgTime] = useState<number | null>(() => calcAvgTime(1))
+  const [othersAvgMs, setOthersAvgMs] = useState<number | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef<number>(Date.now())
   const gameStartRef = useRef<number>(Date.now())
   const totalMovesRef = useRef<number>(0)
   const levelStartFiredRef = useRef(false)
   const { isSoundOn, play, toggleSound } = useSound()
-  const { track, bonusUrl } = useGameBackend()
+  const { track, bonusUrl, token, fetchLevelTimeComparison } = useGameBackend()
 
   const matchedPairs = matched
   const totalPairs = PAIRS_PER_LEVEL
@@ -893,6 +894,16 @@ function App() {
       if (timerRef.current) clearInterval(timerRef.current)
     }
   }, [track])
+
+  // Подтягиваем среднее время других игроков при смене уровня или готовности токена
+  useEffect(() => {
+    if (!token) return
+    let cancelled = false
+    fetchLevelTimeComparison(level).then((data) => {
+      if (!cancelled) setOthersAvgMs(data?.others_avg_duration_ms ?? null)
+    })
+    return () => { cancelled = true }
+  }, [token, level, fetchLevelTimeComparison])
 
   const startTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current)
@@ -914,6 +925,7 @@ function App() {
     levelStartFiredRef.current = false
     setLevel(1)
     setAvgTime(calcAvgTime(1))
+    setOthersAvgMs(null)
     setDeck(createDeck(1))
     setSelected([])
     setMoves(0)
@@ -936,6 +948,7 @@ function App() {
     levelStartFiredRef.current = false
     setLevel(next)
     setAvgTime(calcAvgTime(next))
+    setOthersAvgMs(null)
     setDeck(createDeck(next))
     setSelected([])
     setMoves(0)
@@ -1244,7 +1257,7 @@ function App() {
                 </div>
                 <GradientDivider id="grad2" />
                 <div className="text-center font-bold italic">
-                  <p className="stat-value mb-1">{avgTime !== null ? fmtTime(avgTime) : '—'}</p>
+                  <p className="stat-value mb-1">{othersAvgMs !== null ? fmtTime(Math.round(othersAvgMs / 1000)) : avgTime !== null ? fmtTime(avgTime) : '—'}</p>
                   <p className="stat-label uppercase">среднее время</p>
                 </div>
               </div>
@@ -1290,7 +1303,7 @@ function App() {
               </div>
               <GradientDivider id="mgrad3" />
               <div className="text-center font-bold italic">
-                <p className="text-[22px]/[22px] mb-1">{avgTime !== null ? fmtTime(avgTime) : '—'}</p>
+                <p className="text-[22px]/[22px] mb-1">{othersAvgMs !== null ? fmtTime(Math.round(othersAvgMs / 1000)) : avgTime !== null ? fmtTime(avgTime) : '—'}</p>
                 <p className="text-[12px]/[12px] uppercase">среднее</p>
               </div>
             </div>

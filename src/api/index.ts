@@ -6,6 +6,7 @@ import type {
   Bonus,
   GameSession,
   IngestAck,
+  LevelTimeComparison,
   UtmParams,
 } from './types'
 
@@ -44,4 +45,15 @@ export function ingestEvents(
 /** GET /v1/bonus — current Winline bonus URL. */
 export function getBonus(): Promise<Bonus | null> {
   return apiRequest<Bonus>('/bonus', { method: 'GET' })
+}
+
+/** GET /v1/analytics/levels/{level}/time-comparison — my vs others avg time. */
+export function getLevelTimeComparison(
+  level: number,
+  gameSessionToken: string
+): Promise<LevelTimeComparison | null> {
+  return apiRequest<LevelTimeComparison>(`/analytics/levels/${level}/time-comparison`, {
+    method: 'GET',
+    query: { game_session_token: gameSessionToken },
+  })
 }

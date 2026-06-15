@@ -1,7 +1,7 @@
 /* ─── Game backend hook: session, batched analytics, bonus URL ──────────── */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { getBonus, ingestEvents, startGame } from '../api'
+import { getBonus, getLevelTimeComparison, ingestEvents, startGame } from '../api'
 import type { AnalyticsEvent } from '../api'
 import { getYMClientId } from './useYM'
 import { getSourceFromUTM } from '../utils/utm'
@@ -45,6 +45,7 @@ async function enrichBonusUrl(rawUrl: string): Promise<string> {
 
 export function useGameBackend() {
   const tokenRef = useRef<string | null>(null)
+  const [token, setToken] = useState<string | null>(null)
   const queueRef = useRef<AnalyticsEvent[]>([])
   const flushingRef = useRef(false)
   const [bonusUrl, setBonusUrl] = useState<string>(PROMO_URL)
@@ -60,7 +61,10 @@ export function useGameBackend() {
 
     startGame()
       .then((session) => {
-        if (!cancelled && session) tokenRef.current = session.token
+        if (!cancelled && session) {
+          tokenRef.current = session.token
+          setToken(session.token)
+        }
       })
       .catch((e) => console.warn('[backend] game:start failed', e))
 
@@ -117,5 +121,12 @@ export function useGameBackend() {
     queueRef.current.push(event)
   }, [])
 
-  return { track, flush, bonusUrl }
+  /** Fetch level time comparison from the backend. Requires token to be ready. */
+  const fetchLevelTimeComparison = useCallback((level: number) => {
+    const t = tokenRef.current
+    if (!t) return Promise.resolve(null)
+    return getLevelTimeComparison(level, t).catch(() => null)
+  }, [])
+
+  return { track, flush, bonusUrl, token, fetchLevelTimeComparison }
 }

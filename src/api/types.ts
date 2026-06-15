@@ -45,6 +45,14 @@ export interface Bonus {
   url: string
 }
 
+export interface LevelTimeComparison {
+  level: number
+  my_avg_duration_ms: number | null
+  my_completions: number
+  others_avg_duration_ms: number | null
+  others_completions: number
+}
+
 /* ─── UTM (game:start) ──────────────────────────────────────────────────── */
 
 export interface UtmParams {
