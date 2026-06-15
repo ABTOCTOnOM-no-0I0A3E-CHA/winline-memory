@@ -130,6 +130,53 @@ function fmtTime(secs: number): string {
   return `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`
 }
 
+/* ─── полный resume игры (localStorage) ─────────────────────────────────── */
+
+/** Не считаем время, если игрок бездействует дольше этого порога. */
+const IDLE_LIMIT_MS = 30_000
+const SAVE_KEY = 'wl_game_v1'
+
+interface SavedGame {
+  level: number
+  deck: CardData[]
+  moves: number
+  matched: number
+  /** Накопленное АКТИВНОЕ время текущего уровня, мс. */
+  accMs: number
+  /** Сумма активного времени уже пройденных уровней, мс. */
+  totalActiveMs: number
+  /** Суммарные ходы за пройденные уровни (для game_completed). */
+  totalMoves: number
+}
+
+function loadGame(): SavedGame | null {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY)
+    if (!raw) return null
+    const s = JSON.parse(raw) as SavedGame
+    if (!s || typeof s.level !== 'number' || !Array.isArray(s.deck) || s.deck.length === 0) {
+      return null
+    }
+    // Сбрасываем незавершённый переворот — открытой остаётся только собранная пара.
+    s.deck = s.deck.map((c) => ({ ...c, isFlipped: false }))
+    return s
+  } catch {
+    return null
+  }
+}
+
+function saveGame(s: SavedGame) {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(s))
+  } catch {}
+}
+
+function clearGame() {
+  try {
+    localStorage.removeItem(SAVE_KEY)
+  } catch {}
+}
+
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
 }
@@ -857,11 +904,14 @@ function WinScreen({
 /* ─── главный компонент ─────────────────────────────────────────────────── */
 
 function App() {
-  const [level, setLevel] = useState(1)
-  const [deck, setDeck] = useState<CardData[]>(() => createDeck(1))
+  // Снимок сохранённой игры читаем один раз при маунте (resume после reload).
+  const [saved] = useState(loadGame)
+
+  const [level, setLevel] = useState(saved?.level ?? 1)
+  const [deck, setDeck] = useState<CardData[]>(() => saved?.deck ?? createDeck(saved?.level ?? 1))
   const [selected, setSelected] = useState<number[]>([])
-  const [moves, setMoves] = useState(0)
-  const [matched, setMatched] = useState(0)
+  const [moves, setMoves] = useState(saved?.moves ?? 0)
+  const [matched, setMatched] = useState(saved?.matched ?? 0)
   const [locked, setLocked] = useState(false)
   const [hintIds, setHintIds] = useState<number[]>([])
   const [matchFlashIds, setMatchFlashIds] = useState<number[]>([])
@@ -870,30 +920,92 @@ function App() {
   const [bonusImage, setBonusImage] = useState<string | null>(null)
   const [winOpen, setWinOpen] = useState(false)
   const [levelCompleteOpen, setLevelCompleteOpen] = useState(false)
-  const [elapsed, setElapsed] = useState(0)
+  const [elapsed, setElapsed] = useState(Math.round((saved?.accMs ?? 0) / 1000))
   const [winMoves, setWinMoves] = useState(0)
   const [winElapsed, setWinElapsed] = useState(0)
-  const [avgTime, setAvgTime] = useState<number | null>(() => calcAvgTime(1))
+  const [avgTime, setAvgTime] = useState<number | null>(() => calcAvgTime(saved?.level ?? 1))
   const [othersAvgMs, setOthersAvgMs] = useState<number | null>(null)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const startTimeRef = useRef<number>(Date.now())
-  const gameStartRef = useRef<number>(Date.now())
-  const totalMovesRef = useRef<number>(0)
-  const levelStartFiredRef = useRef(false)
+  const totalMovesRef = useRef<number>(saved?.totalMoves ?? 0)
+  const levelStartFiredRef = useRef(!!saved && (saved.moves > 0 || saved.matched > 0))
+
+  // Аккумулятор активного времени (мс), переживает reload.
+  const accMsRef = useRef<number>(saved?.accMs ?? 0)
+  const totalActiveMsRef = useRef<number>(saved?.totalActiveMs ?? 0)
+  const lastActivityRef = useRef<number>(Date.now())
+  const lastAccrueRef = useRef<number>(Date.now())
+
   const { isSoundOn, play, toggleSound } = useSound()
   const { track, bonusUrl, token, fetchLevelTimeComparison } = useGameBackend()
 
   const matchedPairs = matched
   const totalPairs = PAIRS_PER_LEVEL
 
-  // Таймер + старт первого уровня (аналитика)
-  useEffect(() => {
-    track({ type: 'level_started', level: 1 })
-    timerRef.current = setInterval(() => setElapsed((s) => s + 1), 1000)
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current)
+  // Persist-снимок текущего состояния игры.
+  const saveSnapshot = useCallback(() => {
+    saveGame({
+      level,
+      deck,
+      moves,
+      matched,
+      accMs: accMsRef.current,
+      totalActiveMs: totalActiveMsRef.current,
+      totalMoves: totalMovesRef.current,
+    })
+  }, [level, deck, moves, matched])
+
+  // Закрыть слайс времени: засчитать его, только если игрок был активен (< 30с простоя).
+  const accrue = useCallback(() => {
+    const now = Date.now()
+    const slice = now - lastAccrueRef.current
+    lastAccrueRef.current = now
+    if (slice > 0 && now - lastActivityRef.current <= IDLE_LIMIT_MS) {
+      accMsRef.current += slice
+      setElapsed(Math.round(accMsRef.current / 1000))
     }
-  }, [track])
+  }, [])
+
+  // Отметка реального действия игрока (двигает маркер активности).
+  const markActivity = useCallback(() => {
+    accrue()
+    lastActivityRef.current = Date.now()
+  }, [accrue])
+
+  // Начать отсчёт уровня с нуля (новый уровень / рестарт).
+  const resetLevelTimer = useCallback(() => {
+    accMsRef.current = 0
+    lastActivityRef.current = Date.now()
+    lastAccrueRef.current = Date.now()
+    setElapsed(0)
+  }, [])
+
+  // Старт уровня в аналитике — только для свежей игры (при resume не дублируем).
+  useEffect(() => {
+    if (!saved) track({ type: 'level_started', level: 1 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Тик раз в секунду: копим активное время + персистим. Пауза при скрытой вкладке.
+  useEffect(() => {
+    const id = setInterval(() => {
+      accrue()
+      saveSnapshot()
+    }, 1000)
+    const onVis = () => {
+      if (document.visibilityState === 'hidden') {
+        accrue()
+        saveSnapshot()
+        lastActivityRef.current = 0 // заморозить счёт, пока вкладка в фоне
+      } else {
+        lastActivityRef.current = Date.now()
+        lastAccrueRef.current = Date.now()
+      }
+    }
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVis)
+    }
+  }, [accrue, saveSnapshot])
 
   // Подтягиваем среднее время других игроков при смене уровня или готовности токена
   useEffect(() => {
@@ -905,24 +1017,12 @@ function App() {
     return () => { cancelled = true }
   }, [token, level, fetchLevelTimeComparison])
 
-  const startTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current)
-    startTimeRef.current = Date.now()
-    timerRef.current = setInterval(() => setElapsed((s) => s + 1), 1000)
-  }, [])
-
-  const stopTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
-    }
-  }, [])
-
   const reset = useCallback(() => {
     play('click')
     track({ type: 'replayed' })
     track({ type: 'level_started', level: 1 })
     levelStartFiredRef.current = false
+    clearGame()
     setLevel(1)
     setAvgTime(calcAvgTime(1))
     setOthersAvgMs(null)
@@ -934,11 +1034,10 @@ function App() {
     setWinOpen(false)
     setHintIds([])
     setHintCooldown(false)
-    setElapsed(0)
-    gameStartRef.current = Date.now()
     totalMovesRef.current = 0
-    startTimer()
-  }, [play, track, startTimer])
+    totalActiveMsRef.current = 0
+    resetLevelTimer()
+  }, [play, track, resetLevelTimer])
 
   // Переход на следующий уровень
   const nextLevel = useCallback(() => {
@@ -956,9 +1055,8 @@ function App() {
     setLocked(false)
     setHintIds([])
     setHintCooldown(false)
-    setElapsed(0)
-    startTimer()
-  }, [level, play, track, startTimer])
+    resetLevelTimer()
+  }, [level, play, track, resetLevelTimer])
 
   const handleClick = useCallback(
     (id: number) => {
@@ -967,6 +1065,7 @@ function App() {
       if (!card || card.isFlipped || card.isMatched) return
       if (selected.includes(id)) return
 
+      markActivity()
       play('flip')
 
       if (!levelStartFiredRef.current) {
@@ -1006,10 +1105,11 @@ function App() {
             setLocked(false)
 
             if (newMatched === totalPairs) {
-              stopTimer()
-              const durationMs = Date.now() - startTimeRef.current
+              accrue() // финализируем активное время уровня
+              const durationMs = accMsRef.current
               const levelMoves = moves + 1
               totalMovesRef.current += levelMoves
+              totalActiveMsRef.current += durationMs
               track({ type: 'level_completed', level, moves: levelMoves, duration_ms: durationMs })
               ym('level-finish----interaction', { level: `level-${level}` })
               saveLevelTime(level, Math.round(durationMs / 1000))
@@ -1020,10 +1120,11 @@ function App() {
                 track({
                   type: 'game_completed',
                   total_moves: totalMovesRef.current,
-                  total_duration_ms: Date.now() - gameStartRef.current,
+                  total_duration_ms: totalActiveMsRef.current,
                 })
+                clearGame() // игра пройдена — resume больше не нужен
                 setWinMoves(totalMovesRef.current)
-                setWinElapsed(Math.round((Date.now() - gameStartRef.current) / 1000))
+                setWinElapsed(Math.round(totalActiveMsRef.current / 1000))
                 setTimeout(() => setWinOpen(true), 400)
               } else {
                 play('levelComplete')
@@ -1053,7 +1154,7 @@ function App() {
         setSelected(newSelected)
       }
     },
-    [deck, selected, locked, matched, totalPairs, play, track, moves, stopTimer, level]
+    [deck, selected, locked, matched, totalPairs, play, track, moves, markActivity, accrue, level]
   )
 
   const won = matchedPairs === totalPairs
