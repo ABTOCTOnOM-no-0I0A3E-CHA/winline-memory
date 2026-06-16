@@ -9,8 +9,7 @@ import { getSourceFromUTM } from '../utils/utm'
 const FLUSH_INTERVAL_MS = 5000
 
 /** Актуальная промо-ссылка с плейсхолдерами sub4/sub5. */
-const PROMO_URL =
-  'https://p.winline.ru/s/9rat_E9_a7?statid=6344_sport24&sub=sport24&sub2=spec&sub3=memocup&sub4=%7Bsource%7D&sub5=%7BYM_CLIENT_ID%7D&promocode=SPORT24'
+const PROMO_URL = '#'
 
 /**
  * Injects sub4 (UTM-matched source) and sub5 (YM clientId) into the bonus URL.

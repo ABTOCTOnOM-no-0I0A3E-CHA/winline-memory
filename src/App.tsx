@@ -4,7 +4,7 @@ import { useGameBackend } from './hooks/useGameBackend'
 import { ym } from './hooks/useYM'
 import sport24 from './assets/sport24.svg'
 import cross from './assets/cross.svg'
-import winline from './assets/winline.svg'
+import logo from './assets/logo.svg'
 import RectangleSmall from './assets/rectangle-small'
 import volumeOn from './assets/volume-on.svg'
 import dynamicMuted from './assets/muted-dynamic.svg'
@@ -101,6 +101,12 @@ const OBJECT_NAMES: Record<string, string> = {
 
 const PLACEHOLDER_COLORS = ['#FF6A13', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B']
 
+/** Настраиваемые тайминги (мс). Все переопределяются через VITE_*-переменные. */
+const FLIP_MS = Number(import.meta.env.VITE_FLIP_MS) || 450 // флип-анимация карты
+const MATCH_MS = Number(import.meta.env.VITE_MATCH_MS) || 600 // задержка фиксации совпавшей пары
+const MISMATCH_MS = Number(import.meta.env.VITE_MISMATCH_MS) || 900 // показ несовпавших карт перед закрытием
+const HINT_MS = Number(import.meta.env.VITE_HINT_MS) || 1500 // длительность подсветки подсказки
+
 /* ─── localStorage: среднее время прохождения уровня ────────────────────── */
 
 function getLevelTimes(lvl: number): number[] {
@@ -132,8 +138,8 @@ function fmtTime(secs: number): string {
 
 /* ─── полный resume игры (localStorage) ─────────────────────────────────── */
 
-/** Не считаем время, если игрок бездействует дольше этого порога. */
-const IDLE_LIMIT_MS = 30_000
+/** Не считаем время, если игрок бездействует дольше этого порога (VITE_IDLE_MS). */
+const IDLE_LIMIT_MS = Number(import.meta.env.VITE_IDLE_MS) || 30_000
 const SAVE_KEY = 'wl_game_v1'
 
 interface SavedGame {
@@ -241,7 +247,7 @@ function Card({ card, onClick, placeholderColor, hinted, flashing }: CardProps) 
       <div
         style={{
           transformStyle: 'preserve-3d',
-          transition: 'transform 0.45s',
+          transition: `transform ${FLIP_MS}ms`,
           transform: open ? 'rotateY(180deg)' : 'rotateY(0deg)',
           width: '100%',
           height: '100%',
@@ -277,7 +283,7 @@ function Card({ card, onClick, placeholderColor, hinted, flashing }: CardProps) 
 
           {isBonus && (
             <div className="card-bonus-ribbon absolute bottom-0 right-0 overflow-hidden">
-              <div className="card-bonus-text absolute bg-[#FF6A13] text-white font-winline font-bold italic uppercase text-center">
+              <div className="card-bonus-text absolute bg-[#FF6A13] text-white font-brand font-bold italic uppercase text-center">
                 БОНУС
               </div>
             </div>
@@ -409,7 +415,7 @@ function LevelCompleteModal({
       </div>
 
       <p className="bonus-modal-text font-bold italic mb-6 uppercase text-center">
-        Забирай бонус — <span className="text-[#FF6A13]">Фрибет 10&nbsp;000</span> от Winline
+        Забирай бонус — <span className="text-[#FF6A13]">Фрибет 10&nbsp;000</span>
       </p>
 
       <button
@@ -499,7 +505,7 @@ function BonusModalContent({
 
       <p className="bonus-modal-text font-bold italic mb-1 uppercase">Ты нашел бонусный предмет!</p>
       <p className="bonus-modal-text font-bold italic mb-6 uppercase">
-        Забирай подарок — <span className="text-[#FF6A13]">Фрибет 10&nbsp;000</span> от Winline
+        Забирай подарок — <span className="text-[#FF6A13]">Фрибет 10&nbsp;000</span>
       </p>
 
       <button
@@ -725,7 +731,7 @@ function BonusButton({ bonusUrl, onClick }: { bonusUrl: string; onClick?: () => 
         />
       </svg>
       <img src={gift} className="bonus-gift-icon" />
-      <p className="bonus-btn-label font-winline text-[20px]/[20px] font-bold italic">БОНУС</p>
+      <p className="bonus-btn-label font-brand text-[20px]/[20px] font-bold italic">БОНУС</p>
     </a>
   )
 }
@@ -830,7 +836,7 @@ function WinScreen({
         className="w-full rounded-[10px] p-4 mb-5 text-center"
         style={{ border: '1px solid #E1E1F0' }}
       >
-        <p className="win-bonus-text font-bold italic uppercase">Забирай бонус от Winline:</p>
+        <p className="win-bonus-text font-bold italic uppercase">Забирай бонус:</p>
         <p className="win-bonus-text font-bold italic text-[#FF6A13] uppercase">
           Фрибет 10&nbsp;000!
         </p>
@@ -1137,7 +1143,7 @@ function App() {
             } else {
               play('correct')
             }
-          }, 600)
+          }, MATCH_MS)
         } else {
           setTimeout(() => {
             play('error')
@@ -1148,7 +1154,7 @@ function App() {
             )
             setSelected([])
             setLocked(false)
-          }, 900)
+          }, MISMATCH_MS)
         }
       } else {
         setSelected(newSelected)
@@ -1180,10 +1186,10 @@ function App() {
     setTimeout(() => {
       setHintIds([])
       setHintCooldown(false)
-    }, 1500)
+    }, HINT_MS)
   }, [deck, locked, won, hintCooldown, play, track, level])
 
-  // Клик по «Забрать бонус» — аналитика + переход на ссылку Winline
+  // Клик по «Забрать бонус» — аналитика + переход на бонусную ссылку
   const claimBonus = useCallback(
     (placement: 'level_popup' | 'special_popup' | 'final_screen') => {
       track({ type: 'bonus_clicked', placement })
@@ -1255,7 +1261,7 @@ function App() {
             rel="noopener noreferrer"
             onClick={() => ym('logo----conversion')}
           >
-            <img src={winline} alt="winline" className="inline logo-winline" />
+            <img src={logo} alt="logo" className="inline logo-brand" />
           </a>
         </div>
 
@@ -1293,7 +1299,7 @@ function App() {
             rel="noopener noreferrer"
             onClick={() => ym('logo----conversion')}
           >
-            <img src={winline} alt="winline" className="logo-winline" />
+            <img src={logo} alt="logo" className="logo-brand" />
           </a>
         </div>
 

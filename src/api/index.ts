@@ -42,7 +42,7 @@ export function ingestEvents(
   })
 }
 
-/** GET /v1/bonus — current Winline bonus URL. */
+/** GET /v1/bonus — current bonus URL. */
 export function getBonus(): Promise<Bonus | null> {
   return apiRequest<Bonus>('/bonus', { method: 'GET' })
 }

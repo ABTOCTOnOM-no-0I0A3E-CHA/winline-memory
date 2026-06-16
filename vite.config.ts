@@ -19,6 +19,6 @@ export default defineConfig({
     },
   },
   preview: {
-    allowedHosts: ['winline.fia.li'],
+    allowedHosts: true,
   },
 })

@@ -62,12 +62,12 @@ body {
   height: auto;
 }
 
-.logo-winline {
+.logo-brand {
   height: auto;
 }
 
 @media (max-width: 992px) {
-  .logo-winline {
+  .logo-brand {
     width: 75px;
   }
 

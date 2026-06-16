@@ -1,5 +1,5 @@
 /**
- * UTM → sub4 source mapping for the Winline promo link.
+ * UTM → sub4 source mapping for the promo link.
  *
  * Priority (highest to lowest):
  *   1. utm_term  (vk1..vk10, rsya1..rsya15)
