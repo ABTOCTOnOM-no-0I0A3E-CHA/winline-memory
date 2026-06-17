@@ -7,6 +7,7 @@ import { getYMClientId } from './useYM'
 import { getSourceFromUTM } from '../utils/utm'
 
 const FLUSH_INTERVAL_MS = 5000
+const TOKEN_KEY = 'wl_game_token'
 
 /** Актуальная промо-ссылка с плейсхолдерами sub4/sub5. */
 const PROMO_URL =
@@ -50,7 +51,7 @@ export function useGameBackend() {
   const flushingRef = useRef(false)
   const [bonusUrl, setBonusUrl] = useState<string>(PROMO_URL)
 
-  // Init: create game session + load bonus url
+  // Init: restore or create game session + load bonus url
   useEffect(() => {
     let cancelled = false
 
@@ -59,14 +60,22 @@ export function useGameBackend() {
       if (!cancelled) setBonusUrl(enriched)
     })
 
-    startGame()
-      .then((session) => {
-        if (!cancelled && session) {
-          tokenRef.current = session.token
-          setToken(session.token)
-        }
-      })
-      .catch((e) => console.warn('[backend] game:start failed', e))
+    // Reuse existing token across page reloads — don't create a new session
+    const savedToken = localStorage.getItem(TOKEN_KEY)
+    if (savedToken) {
+      tokenRef.current = savedToken
+      setToken(savedToken)
+    } else {
+      startGame()
+        .then((session) => {
+          if (!cancelled && session) {
+            tokenRef.current = session.token
+            setToken(session.token)
+            localStorage.setItem(TOKEN_KEY, session.token)
+          }
+        })
+        .catch((e) => console.warn('[backend] game:start failed', e))
+    }
 
     // Backend may override with a different URL (future-proof)
     getBonus()
@@ -128,5 +137,21 @@ export function useGameBackend() {
     return getLevelTimeComparison(level, t).catch(() => null)
   }, [])
 
-  return { track, flush, bonusUrl, token, fetchLevelTimeComparison }
+  /** Start a brand-new session (call on game restart / "play again"). */
+  const restartSession = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY)
+    tokenRef.current = null
+    setToken(null)
+    startGame()
+      .then((session) => {
+        if (session) {
+          tokenRef.current = session.token
+          setToken(session.token)
+          localStorage.setItem(TOKEN_KEY, session.token)
+        }
+      })
+      .catch((e) => console.warn('[backend] game:start failed', e))
+  }, [])
+
+  return { track, flush, bonusUrl, token, fetchLevelTimeComparison, restartSession }
 }

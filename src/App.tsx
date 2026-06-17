@@ -935,7 +935,7 @@ function App() {
   const lastAccrueRef = useRef<number>(Date.now())
 
   const { isSoundOn, play, toggleSound } = useSound()
-  const { track, bonusUrl, token, fetchLevelTimeComparison } = useGameBackend()
+  const { track, bonusUrl, token, fetchLevelTimeComparison, restartSession } = useGameBackend()
 
   const matchedPairs = matched
   const totalPairs = PAIRS_PER_LEVEL
@@ -1023,6 +1023,7 @@ function App() {
     track({ type: 'level_started', level: 1 })
     levelStartFiredRef.current = false
     clearGame()
+    restartSession()
     setLevel(1)
     setAvgTime(calcAvgTime(1))
     setOthersAvgMs(null)
@@ -1037,7 +1038,7 @@ function App() {
     totalMovesRef.current = 0
     totalActiveMsRef.current = 0
     resetLevelTimer()
-  }, [play, track, resetLevelTimer])
+  }, [play, track, resetLevelTimer, restartSession])
 
   // Переход на следующий уровень
   const nextLevel = useCallback(() => {
