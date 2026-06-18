@@ -4,7 +4,6 @@ import { useGameBackend } from './hooks/useGameBackend'
 import { ym } from './hooks/useYM'
 import sport24 from './assets/sport24.svg'
 import cross from './assets/cross.svg'
-import logo from './assets/logo.svg'
 import RectangleSmall from './assets/rectangle-small'
 import volumeOn from './assets/volume-on.svg'
 import dynamicMuted from './assets/muted-dynamic.svg'
@@ -1254,15 +1253,6 @@ function App() {
           >
             <img src={sport24} alt="sport24" className="inline logo-sport24" />
           </a>
-          <img src={cross} alt="cross" className="inline mx-4 logo-cross" />
-          <a
-            href={bonusUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => ym('logo----conversion')}
-          >
-            <img src={logo} alt="logo" className="inline logo-brand" />
-          </a>
         </div>
 
         <div className="flex justify-center items-center gap-1 flex-1">
@@ -1291,15 +1281,6 @@ function App() {
             onClick={() => ym('sport24----interaction')}
           >
             <img src={sport24} alt="sport24" className="logo-sport24" />
-          </a>
-          <img src={cross} alt="cross" className="mx-3 logo-cross" />
-          <a
-            href={bonusUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => ym('logo----conversion')}
-          >
-            <img src={logo} alt="logo" className="logo-brand" />
           </a>
         </div>
 

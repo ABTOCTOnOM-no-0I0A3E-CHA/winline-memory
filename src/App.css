@@ -62,21 +62,9 @@ body {
   height: auto;
 }
 
-.logo-brand {
-  height: auto;
-}
-
 @media (max-width: 992px) {
-  .logo-brand {
-    width: 75px;
-  }
-
   .logo-sport24 {
     width: 65px;
-  }
-
-  .logo-cross {
-    width: 10px;
   }
 }
 
