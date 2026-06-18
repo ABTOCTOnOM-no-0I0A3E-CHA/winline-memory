@@ -7,7 +7,7 @@ import cross from './assets/cross.svg'
 import RectangleSmall from './assets/rectangle-small'
 import volumeOn from './assets/volume-on.svg'
 import dynamicMuted from './assets/muted-dynamic.svg'
-import gift from './assets/gift.svg'
+/* import gift from './assets/gift.svg' */
 import Rectangle from './assets/rectangle'
 import light from './assets/light.svg'
 import touch from './assets/touch.svg'
@@ -35,36 +35,36 @@ type Pair = { image: string; isBonus: boolean }
 const LEVELS: Pair[][] = [
   // Уровень 1: базовые футбольные предметы
   [
-    { image: '/ball.webp', isBonus: true },       // мяч (Trionda ЧМ-2026) — особый
-    { image: '/foot.webp', isBonus: false },       // бутса
-    { image: '/whistle.webp', isBonus: false },    // свисток
-    { image: '/cup.webp', isBonus: true },         // кубок ЧМ — особый
-    { image: '/wear.webp', isBonus: false },       // футбольная форма
-    { image: '/gloves.webp', isBonus: false },     // вратарские перчатки
-    { image: '/bracelet.webp', isBonus: false },   // капитанская повязка
-    { image: '/cards.webp', isBonus: false },      // судейские карточки
+    { image: '/ball.webp', isBonus: true }, // мяч (Trionda ЧМ-2026) — особый
+    { image: '/foot.webp', isBonus: false }, // бутса
+    { image: '/whistle.webp', isBonus: false }, // свисток
+    { image: '/cup.webp', isBonus: true }, // кубок ЧМ — особый
+    { image: '/wear.webp', isBonus: false }, // футбольная форма
+    { image: '/gloves.webp', isBonus: false }, // вратарские перчатки
+    { image: '/bracelet.webp', isBonus: false }, // капитанская повязка
+    { image: '/cards.webp', isBonus: false }, // судейские карточки
   ],
   // Уровень 2: отсылки к ЧМ-2026
   [
-    { image: '/ticket.webp', isBonus: true },      // золотой билет — особый
-    { image: '/flag.webp', isBonus: true },        // флаг с цифрой 48 — особый
-    { image: '/hat.webp', isBonus: false },        // сомбреро
-    { image: '/bottle.webp', isBonus: false },     // кленовый сироп
-    { image: '/memorial.webp', isBonus: false },   // статуя свободы
-    { image: '/tornado.webp', isBonus: false },    // торнадо/шторм
-    { image: '/wolf.webp', isBonus: false },       // талисман (волк Lobo)
-    { image: '/world.webp', isBonus: false },      // глобус / карта мира
+    { image: '/ticket.webp', isBonus: true }, // золотой билет — особый
+    { image: '/flag.webp', isBonus: true }, // флаг с цифрой 48 — особый
+    { image: '/hat.webp', isBonus: false }, // сомбреро
+    { image: '/bottle.webp', isBonus: false }, // кленовый сироп
+    { image: '/memorial.webp', isBonus: false }, // статуя свободы
+    { image: '/tornado.webp', isBonus: false }, // торнадо/шторм
+    { image: '/wolf.webp', isBonus: false }, // талисман (волк Lobo)
+    { image: '/world.webp', isBonus: false }, // глобус / карта мира
   ],
   // Уровень 3: легендарные символы футбола
   [
-    { image: '/goldenball.webp', isBonus: true },  // золотой мяч — особый
-    { image: '/playercard.webp', isBonus: true },  // карточка Panini — особый
-    { image: '/pipe.webp', isBonus: false },       // вувузела
-    { image: '/screen.webp', isBonus: false },     // VAR-монитор
-    { image: '/score.webp', isBonus: false },      // счёт 5:0 на табло
-    { image: '/field.webp', isBonus: false },      // тактическая доска
-    { image: '/jar.webp', isBonus: false },        // судейский спрей
-    { image: '/clock.webp', isBonus: false },      // счётчик добавленного времени
+    { image: '/goldenball.webp', isBonus: true }, // золотой мяч — особый
+    { image: '/playercard.webp', isBonus: true }, // карточка Panini — особый
+    { image: '/pipe.webp', isBonus: false }, // вувузела
+    { image: '/screen.webp', isBonus: false }, // VAR-монитор
+    { image: '/score.webp', isBonus: false }, // счёт 5:0 на табло
+    { image: '/field.webp', isBonus: false }, // тактическая доска
+    { image: '/jar.webp', isBonus: false }, // судейский спрей
+    { image: '/clock.webp', isBonus: false }, // счётчик добавленного времени
   ],
 ]
 
@@ -280,13 +280,13 @@ function Card({ card, onClick, placeholderColor, hinted, flashing }: CardProps) 
             </div>
           )}
 
-          {isBonus && (
+          {/* {isBonus && (
             <div className="card-bonus-ribbon absolute bottom-0 right-0 overflow-hidden">
               <div className="card-bonus-text absolute bg-[#FF6A13] text-white font-brand font-bold italic uppercase text-center">
                 БОНУС
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>
@@ -362,7 +362,7 @@ function SoundButton({ isSoundOn, onToggle }: { isSoundOn: boolean; onToggle: ()
 
 /* ─── gift icon (белый, для оранжевой кнопки) ───────────────────────────── */
 
-function GiftIconWhite() {
+/* function GiftIconWhite() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -382,14 +382,14 @@ function GiftIconWhite() {
       />
     </svg>
   )
-}
+} */
 
 /* ─── модальное окно "Уровень пройден" ─────────────────────────────────── */
 
 function LevelCompleteModal({
   image,
   onClose,
-  onClaimBonus,
+  /* onClaimBonus, */
 }: {
   image: string
   onClose: () => void
@@ -413,17 +413,17 @@ function LevelCompleteModal({
         <img src={image} className="w-full h-full object-contain" />
       </div>
 
-      <p className="bonus-modal-text font-bold italic mb-6 uppercase text-center">
+      {/* <p className="bonus-modal-text font-bold italic mb-6 uppercase text-center">
         Забирай бонус — <span className="text-[#FF6A13]">Фрибет 10&nbsp;000</span>
-      </p>
+      </p> */}
 
-      <button
+      {/* <button
         className="btn-primary bg-[#FF6A13] rounded-full flex items-center justify-center gap-2 w-full py-3 mb-3"
         onClick={onClaimBonus}
       >
         <GiftIconWhite />
         <span className="bonus-modal-btn uppercase font-bold italic text-white">Забрать бонус</span>
-      </button>
+      </button> */}
       <button
         className="btn-outline rounded-full border border-[#E1E1F0] w-full py-3"
         onClick={onClose}
@@ -435,13 +435,13 @@ function LevelCompleteModal({
 
   return (
     <div
-      className="fixed inset-0 z-[110] flex items-center justify-center rules-modal-overlay"
+      className="fixed inset-0 z-110 flex items-center justify-center rules-modal-overlay"
       style={{ background: '#9696964D', backdropFilter: 'blur(7px)' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       {/* Desktop */}
       <div
-        className="modal-desktop relative bg-white rounded-[20px] mx-4 w-full max-w-[475px] p-6 flex-col items-center text-center"
+        className="modal-desktop relative bg-white rounded-[20px] mx-4 w-full max-w-118.75 p-6 flex-col items-center text-center"
         style={{
           border: '2px solid #FF6A13',
           boxShadow: '0px 2px 44px rgba(255, 106, 19, 0.6), -2px 4px 3px rgba(0, 0, 0, 0.02)',
@@ -475,7 +475,7 @@ function LevelCompleteModal({
 
 /* ─── содержимое модалки "Бонус" ───────────────────────────────────────── */
 
-function BonusModalContent({
+/*function BonusModalContent({
   image,
   onClose,
   onClaimBonus,
@@ -503,11 +503,11 @@ function BonusModalContent({
       </div>
 
       <p className="bonus-modal-text font-bold italic mb-1 uppercase">Ты нашел бонусный предмет!</p>
-      <p className="bonus-modal-text font-bold italic mb-6 uppercase">
+      {/* <p className="bonus-modal-text font-bold italic mb-6 uppercase">
         Забирай подарок — <span className="text-[#FF6A13]">Фрибет 10&nbsp;000</span>
-      </p>
+      </p> */ /*}
 
-      <button
+      {/* <button
         className="btn-primary bg-[#FF6A13] rounded-full flex items-center justify-center gap-2 w-full py-3 mb-3"
         onClick={onClaimBonus}
       >
@@ -515,7 +515,7 @@ function BonusModalContent({
         <span className="bonus-modal-btn uppercase font-bold italic text-white">
           Забрать подарок
         </span>
-      </button>
+      </button> */ /*}
       <button
         className="btn-outline rounded-full border border-[#E1E1F0] w-full py-3"
         onClick={onClose}
@@ -524,11 +524,11 @@ function BonusModalContent({
       </button>
     </>
   )
-}
+}*/
 
 /* ─── модальное окно "Бонус" ────────────────────────────────────────────── */
 
-interface BonusModalProps {
+/* interface BonusModalProps {
   image: string
   onClose: () => void
   onClaimBonus: () => void
@@ -541,7 +541,7 @@ function BonusModal({ image, onClose, onClaimBonus }: BonusModalProps) {
       style={{ background: '#9696964D', backdropFilter: 'blur(7px)' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      {/* ── DESKTOP (> 720px): центрированный ── */}
+      {/* ── DESKTOP (> 720px): центрированный ── */ /*}
       <div
         className="modal-desktop relative bg-white rounded-[20px] mx-4 w-full max-w-[475px] p-6 flex-col items-center text-center"
         style={{
@@ -565,7 +565,7 @@ function BonusModal({ image, onClose, onClaimBonus }: BonusModalProps) {
         <BonusModalContent image={image} onClose={onClose} onClaimBonus={onClaimBonus} />
       </div>
 
-      {/* ── MOBILE (≤ 720px): выезжает снизу ── */}
+      {/* ── MOBILE (≤ 720px): выезжает снизу ── */ /*}
       <div className="modal-mobile absolute bottom-0 left-0 right-0 flex-col">
         <div className="bg-white rounded-t-[20px] px-4 pt-6 pb-8 flex flex-col items-center text-center">
           <BonusModalContent image={image} onClose={onClose} onClaimBonus={onClaimBonus} />
@@ -587,17 +587,23 @@ function RulesModal({ onClose, onRestart, bonusUrl }: RulesModalProps) {
   return (
     /* Оверлей */
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center rules-modal-overlay"
+      className="fixed inset-0 z-100 flex items-center justify-center rules-modal-overlay"
       style={{ background: '#9696964D', backdropFilter: 'blur(7px)' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       {/* ── DESKTOP: центрированный блок (> 720px) ── */}
-      <div className="modal-desktop w-full max-w-[469px] mx-auto flex-col gap-[10px]">
+      <div className="modal-desktop w-full max-w-117.25 mx-auto flex-col gap-2.5">
         {/* Реклама */}
         <div className="relative rounded-[10px] overflow-hidden">
-          <a href={bonusUrl} target="_blank" rel="noopener noreferrer" onClick={() => ym('banner----conversion')} className="block aspect-[469/250]">
+          {/* <a
+            href={bonusUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => ym('banner----conversion')}
+            className="block aspect-[469/250]"
+          >
             <img src="/ad.webp" className="w-full h-full object-cover block cursor-pointer" />
-          </a>
+          </a> */}
           <button
             className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow"
             onClick={onClose}
@@ -649,8 +655,14 @@ function RulesModal({ onClose, onRestart, bonusUrl }: RulesModalProps) {
       {/* ── MOBILE: выезжает снизу (< 720px) ── */}
       <div className="modal-mobile absolute bottom-0 left-0 right-0 flex-col">
         {/* Реклама с отступами 10px */}
-        <div className="relative rounded-[10px] overflow-hidden mx-[10px] mb-[10px]">
-          <a href={bonusUrl} target="_blank" rel="noopener noreferrer" onClick={() => ym('banner----conversion')} className="block aspect-[469/250]">
+        <div className="relative rounded-[10px] overflow-hidden mx-2.5 mb-2.5">
+          <a
+            href={bonusUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => ym('banner----conversion')}
+            className="block aspect-469/250"
+          >
             <img src="/ad.webp" className="w-full h-full object-cover block cursor-pointer" />
           </a>
           <button
@@ -706,7 +718,7 @@ function RulesModal({ onClose, onRestart, bonusUrl }: RulesModalProps) {
 
 /* ─── кнопка бонуса ─────────────────────────────────────────────────────── */
 
-function BonusButton({ bonusUrl, onClick }: { bonusUrl: string; onClick?: () => void }) {
+/*function BonusButton({ bonusUrl, onClick }: { bonusUrl: string; onClick?: () => void }) {
   return (
     <a
       href={bonusUrl}
@@ -741,7 +753,7 @@ function WinScreen({
   moves,
   elapsed,
   onRestart,
-  onClaimBonus,
+  /* onClaimBonus, */
   onShare,
 }: {
   moves: number
@@ -795,7 +807,9 @@ function WinScreen({
           </div>
         </div>
         <div className="p-4 border rounded-[10px] border-[#E1E1F0]">
-          <p className="win-section-label font-bold italic uppercase mb-1">Поделиться результатом</p>
+          <p className="win-section-label font-bold italic uppercase mb-1">
+            Поделиться результатом
+          </p>
           <div className="flex gap-2 justify-center">
             <a
               href={`https://vk.com/share.php?url=${shareUrl}&title=${shareText}`}
@@ -831,7 +845,7 @@ function WinScreen({
         </div>
       </div>
 
-      <div
+      {/* <div
         className="w-full rounded-[10px] p-4 mb-5 text-center"
         style={{ border: '1px solid #E1E1F0' }}
       >
@@ -839,9 +853,9 @@ function WinScreen({
         <p className="win-bonus-text font-bold italic text-[#FF6A13] uppercase">
           Фрибет 10&nbsp;000!
         </p>
-      </div>
+      </div> */}
 
-      <button
+      {/* <button
         className="btn-primary bg-[#FF6A13] rounded-full flex items-center justify-center gap-2 w-full py-3 mb-3"
         onClick={onClaimBonus}
       >
@@ -849,7 +863,7 @@ function WinScreen({
         <span className="uppercase font-bold italic text-[20px]/[20px] text-white">
           Забрать бонус
         </span>
-      </button>
+      </button> */}
       <button
         className="btn-outline rounded-full border border-[#E1E1F0] w-full py-3 flex items-center justify-center gap-2"
         onClick={onRestart}
@@ -874,7 +888,7 @@ function WinScreen({
       >
         <div className="flex-1 flex items-center justify-center p-4">
           <div
-            className="bg-white rounded-[20px] w-full max-w-[480px] p-8 flex flex-col items-center text-center"
+            className="bg-white rounded-[20px] w-full max-w-120 p-8 flex flex-col items-center text-center"
             style={{
               border: '2px solid #FF6A13',
               boxShadow: '0px 2px 44px rgba(255, 106, 19, 0.6), -2px 4px 3px rgba(0, 0, 0, 0.02)',
@@ -887,7 +901,7 @@ function WinScreen({
 
       {/* ── Мобилка: конфетти сверху над карточкой ── */}
       <div
-        className="mobile-only fixed inset-0 z-[48] pointer-events-none"
+        className="mobile-only fixed inset-0 z-48 pointer-events-none"
         style={{
           backgroundImage: 'url(/win.webp)',
           backgroundSize: 'cover',
@@ -897,7 +911,7 @@ function WinScreen({
 
       {/* ── Мобилка: карточка выезжает снизу ── */}
       <div
-        className="mobile-only fixed bottom-[65px] left-0 right-0 z-[51] rules-modal-mobile bg-white overflow-y-auto max-h-[85vh]"
+        className="mobile-only fixed bottom-16.25 left-0 right-0 z-51 rules-modal-mobile bg-white overflow-y-auto max-h-[85vh]"
         style={{ borderTop: '2px solid #FF6A13', borderRadius: '20px 20px 0 0' }}
       >
         <div className="px-4 pt-6 pb-6 flex flex-col items-center text-center">{cardContent}</div>
@@ -912,6 +926,7 @@ function App() {
   // Снимок сохранённой игры читаем один раз при маунте (resume после reload).
   const [saved] = useState(loadGame)
 
+  const [isGameCompleted, setIsGameCompleted] = useState(false)
   const [level, setLevel] = useState(saved?.level ?? 1)
   const [deck, setDeck] = useState<CardData[]>(() => saved?.deck ?? createDeck(saved?.level ?? 1))
   const [selected, setSelected] = useState<number[]>([])
@@ -922,7 +937,7 @@ function App() {
   const [matchFlashIds, setMatchFlashIds] = useState<number[]>([])
   const [hintCooldown, setHintCooldown] = useState(false)
   const [rulesOpen, setRulesOpen] = useState(false)
-  const [bonusImage, setBonusImage] = useState<string | null>(null)
+  /* const [bonusImage, setBonusImage] = useState<string | null>(null) */
   const [winOpen, setWinOpen] = useState(false)
   const [levelCompleteOpen, setLevelCompleteOpen] = useState(false)
   const [elapsed, setElapsed] = useState(Math.round((saved?.accMs ?? 0) / 1000))
@@ -945,8 +960,15 @@ function App() {
   const matchedPairs = matched
   const totalPairs = PAIRS_PER_LEVEL
 
+  useEffect(() => {
+    if (winOpen || isGameCompleted) {
+      clearGame()
+    }
+  }, [winOpen, isGameCompleted])
+
   // Persist-снимок текущего состояния игры.
   const saveSnapshot = useCallback(() => {
+    if (isGameCompleted) return
     saveGame({
       level,
       deck,
@@ -992,6 +1014,7 @@ function App() {
   // Тик раз в секунду: копим активное время + персистим. Пауза при скрытой вкладке.
   useEffect(() => {
     const id = setInterval(() => {
+      if (isGameCompleted) return
       accrue()
       saveSnapshot()
     }, 1000)
@@ -1019,7 +1042,9 @@ function App() {
     fetchLevelTimeComparison(level).then((data) => {
       if (!cancelled) setOthersAvgMs(data?.others_avg_duration_ms ?? null)
     })
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [token, level, fetchLevelTimeComparison])
 
   const reset = useCallback(() => {
@@ -1043,6 +1068,21 @@ function App() {
     totalActiveMsRef.current = 0
     resetLevelTimer()
   }, [play, track, resetLevelTimer])
+
+  const resetAllGameData = () => {
+    clearGame() // уже есть в коде
+
+    // Удаляем всё, что связано с игрой
+    const keysToRemove = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && (key.startsWith('wl_') || key === SAVE_KEY)) {
+        keysToRemove.push(key)
+      }
+    }
+
+    keysToRemove.forEach((key) => localStorage.removeItem(key))
+  }
 
   // Переход на следующий уровень
   const nextLevel = useCallback(() => {
@@ -1128,6 +1168,15 @@ function App() {
                   total_duration_ms: totalActiveMsRef.current,
                 })
                 clearGame() // игра пройдена — resume больше не нужен
+                clearInterval(id)
+                localStorage.removeItem(SAVE_KEY)
+                Object.keys(localStorage).forEach((key) => {
+                  if (key.startsWith('wl_') || key === SAVE_KEY || key.startsWith('wl_times_')) {
+                    localStorage.removeItem(key)
+                  }
+                })
+                setIsGameCompleted(true)
+                resetAllGameData()
                 setWinMoves(totalMovesRef.current)
                 setWinElapsed(Math.round(totalActiveMsRef.current / 1000))
                 setTimeout(() => setWinOpen(true), 400)
@@ -1138,7 +1187,7 @@ function App() {
             } else if (isBonus) {
               play('bonus')
               track({ type: 'special_pair_found', level })
-              setBonusImage(first.image || '/foot.webp')
+              /* setBonusImage(first.image || '/foot.webp') */
             } else {
               play('correct')
             }
@@ -1192,7 +1241,8 @@ function App() {
   const claimBonus = useCallback(
     (placement: 'level_popup' | 'special_popup' | 'final_screen') => {
       track({ type: 'bonus_clicked', placement })
-      if (placement === 'level_popup') ym('level-complete----conversion', { level: `level-${level}` })
+      if (placement === 'level_popup')
+        ym('level-complete----conversion', { level: `level-${level}` })
       else if (placement === 'special_popup') ym('spec-predmet----conversion')
       else if (placement === 'final_screen') ym('final----conversion')
       window.open(bonusUrl, '_blank', 'noopener')
@@ -1218,9 +1268,16 @@ function App() {
   return (
     <>
       {rulesOpen && (
-        <RulesModal onClose={() => setRulesOpen(false)} onRestart={() => { ym('reset----interaction'); reset() }} bonusUrl={bonusUrl} />
+        <RulesModal
+          onClose={() => setRulesOpen(false)}
+          onRestart={() => {
+            ym('reset----interaction')
+            reset()
+          }}
+          bonusUrl={bonusUrl}
+        />
       )}
-      {bonusImage && (
+      {/* {bonusImage && (
         <BonusModal
           image={bonusImage}
           onClose={() => {
@@ -1229,7 +1286,7 @@ function App() {
           }}
           onClaimBonus={() => claimBonus('special_popup')}
         />
-      )}
+      )} */}
       {levelCompleteOpen && (
         <LevelCompleteModal
           image={level === 1 ? '/record.webp' : '/20.png'}
@@ -1266,8 +1323,14 @@ function App() {
         </div>
 
         <div className="flex-1 justify-end items-center flex gap-2.5">
-          <SoundButton isSoundOn={isSoundOn} onToggle={() => { ym('zvuk----interaction'); toggleSound() }} />
-          <BonusButton bonusUrl={bonusUrl} onClick={() => ym('bonus----conversion')} />
+          <SoundButton
+            isSoundOn={isSoundOn}
+            onToggle={() => {
+              ym('zvuk----interaction')
+              toggleSound()
+            }}
+          />
+          {/* <BonusButton bonusUrl={bonusUrl} onClick={() => ym('bonus----conversion')} /> */}
         </div>
       </header>
 
@@ -1300,7 +1363,10 @@ function App() {
         <WinScreen
           moves={winMoves}
           elapsed={winElapsed}
-          onRestart={() => { ym('play_again----interaction'); reset() }}
+          onRestart={() => {
+            ym('play_again----interaction')
+            reset()
+          }}
           onClaimBonus={() => claimBonus('final_screen')}
           onShare={share}
         />
@@ -1345,7 +1411,13 @@ function App() {
                 </div>
                 <GradientDivider id="grad2" />
                 <div className="text-center font-bold italic">
-                  <p className="stat-value mb-1">{othersAvgMs !== null ? fmtTime(Math.round(othersAvgMs / 1000)) : avgTime !== null ? fmtTime(avgTime) : '—'}</p>
+                  <p className="stat-value mb-1">
+                    {othersAvgMs !== null
+                      ? fmtTime(Math.round(othersAvgMs / 1000))
+                      : avgTime !== null
+                        ? fmtTime(avgTime)
+                        : '—'}
+                  </p>
                   <p className="stat-label uppercase">среднее время</p>
                 </div>
               </div>
@@ -1369,8 +1441,10 @@ function App() {
           </div>
 
           {/* ── Mobile: уровень + статы + ректанглы (над игровым полем) ── */}
-          <div className="mobile-only flex flex-col mb-[15px]">
-            <p className="font-bold text-[28px]/[28px] italic text-center mb-2.5">УРОВЕНЬ {level}</p>
+          <div className="mobile-only flex flex-col mb-3.75">
+            <p className="font-bold text-[28px]/[28px] italic text-center mb-2.5">
+              УРОВЕНЬ {level}
+            </p>
 
             <div className="grid grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr] items-center mb-2.5">
               <div className="text-center font-bold italic">
@@ -1391,7 +1465,13 @@ function App() {
               </div>
               <GradientDivider id="mgrad3" />
               <div className="text-center font-bold italic">
-                <p className="text-[22px]/[22px] mb-1">{othersAvgMs !== null ? fmtTime(Math.round(othersAvgMs / 1000)) : avgTime !== null ? fmtTime(avgTime) : '—'}</p>
+                <p className="text-[22px]/[22px] mb-1">
+                  {othersAvgMs !== null
+                    ? fmtTime(Math.round(othersAvgMs / 1000))
+                    : avgTime !== null
+                      ? fmtTime(avgTime)
+                      : '—'}
+                </p>
                 <p className="text-[12px]/[12px] uppercase">среднее</p>
               </div>
             </div>
@@ -1446,13 +1526,16 @@ function App() {
               </ul>
               <button
                 className="btn-outline flex rounded-full border border-[#E1E1F0] py-3 w-full justify-center gap-1"
-                onClick={() => { ym('reset----interaction'); reset() }}
+                onClick={() => {
+                  ym('reset----interaction')
+                  reset()
+                }}
               >
                 <img src={retry} />
                 <span className="restart-btn-text uppercase font-bold italic">Начать заново</span>
               </button>
             </div>
-            <a
+            {/* <a
               href={bonusUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -1460,7 +1543,7 @@ function App() {
               className="block aspect-[469/250] rounded-[10px] shadow-[-2px_4px_3px_rgba(0,0,0,0.02),-2px_4px_3px_rgba(0,0,0,0.02)] bg-gray-400 overflow-hidden cursor-pointer"
             >
               <img src="/ad.webp" className="w-full h-full object-cover" />
-            </a>
+            </a> */}
           </div>
         </main>
       )}
@@ -1470,12 +1553,21 @@ function App() {
         <div className="flex items-center gap-2.5">
           <button
             className="btn-outline w-10 h-10 rounded-full border border-[#E1E1F0] flex items-center justify-center"
-            onClick={() => { ym('pravila----interaction'); setRulesOpen(true) }}
+            onClick={() => {
+              ym('pravila----interaction')
+              setRulesOpen(true)
+            }}
           >
             <img src={info} alt="info" className="w-5 h-5" />
           </button>
-          <SoundButton isSoundOn={isSoundOn} onToggle={() => { ym('zvuk----interaction'); toggleSound() }} />
-          <BonusButton bonusUrl={bonusUrl} onClick={() => ym('bonus----conversion')} />
+          <SoundButton
+            isSoundOn={isSoundOn}
+            onToggle={() => {
+              ym('zvuk----interaction')
+              toggleSound()
+            }}
+          />
+          {/* <BonusButton bonusUrl={bonusUrl} onClick={() => ym('bonus----conversion')} /> */}
         </div>
 
         <button
@@ -1484,7 +1576,9 @@ function App() {
           disabled={hintCooldown}
         >
           <img src={light} />
-          <span className="text-[16px]/[16px] font-bold italic text-white uppercase">подсказка</span>
+          <span className="text-[16px]/[16px] font-bold italic text-white uppercase">
+            подсказка
+          </span>
         </button>
       </div>
     </>
